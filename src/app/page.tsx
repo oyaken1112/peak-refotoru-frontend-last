@@ -15,12 +15,9 @@ export default function Home() {
     logoWhite: false
   });
 
-  const [styleImagesError, setStyleImagesError] = useState({
-    0: false,
-    1: false,
-    2: false,
-    3: false
-  });
+  const [styleImagesError, setStyleImagesError] = useState<boolean[]>([
+    false, false, false, false
+  ]);
 
   const handleImageError = (imageName: string) => {
     setImageError(prev => ({
@@ -30,10 +27,11 @@ export default function Home() {
   };
 
   const handleStyleImageError = (index: number) => {
-    setStyleImagesError(prev => ({
-      ...prev,
-      [index]: true
-    }));
+    setStyleImagesError(prev => {
+      const newArray = [...prev];
+      newArray[index] = true;
+      return newArray;
+    });
   };
 
   const styles = [
