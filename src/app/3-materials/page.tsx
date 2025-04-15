@@ -312,7 +312,7 @@ export default function MaterialsPage() {
                       {'image' in material && material.image ? (
                         <div className="h-32">
                           <Image
-                            src={material.image}
+                            src={typeof material.image === 'string' ? material.image : '/images/placeholder.jpg'}
                             alt={material.name}
                             width={150}
                             height={120}
