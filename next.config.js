@@ -6,6 +6,7 @@ const nextConfig = {
     domains: [
       'hebbkx1anhila5yf.public.blob.vercel-storage.com'
     ],
+    unoptimized: true,  // 画像最適化を無効化
   },
 }
 
