@@ -22,14 +22,14 @@ export default function Home() {
     3: false
   });
 
-  const handleImageError = (imageName) => {
+  const handleImageError = (imageName: string) => {
     setImageError(prev => ({
       ...prev,
       [imageName]: true
     }));
   };
 
-  const handleStyleImageError = (index) => {
+  const handleStyleImageError = (index: number) => {
     setStyleImagesError(prev => ({
       ...prev,
       [index]: true
