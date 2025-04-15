@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react'; // Suspenseを追加
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useImageContext } from '@/lib/image-context';
 import { useRouter } from 'next/navigation';
 
-export default function MaterialsPage() {
+
+// 新しいコンポーネント - 元のMaterialsPageの内容をすべてここに移す
+function MaterialsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
 
@@ -397,5 +399,13 @@ export default function MaterialsPage() {
         </div>
       </div>
     </div>
+  );
+}
+// 新しいMaterialsPage - これをエクスポート
+export default function MaterialsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#fdf6f2] flex items-center justify-center">読み込み中...</div>}>
+      <MaterialsContent />
+    </Suspense>
   );
 }
