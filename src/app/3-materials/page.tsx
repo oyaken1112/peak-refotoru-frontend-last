@@ -282,10 +282,11 @@ function MaterialsContent() {
                     alt="Room Image"
                     width={640}
                     height={480}
-                    className="w-full h-full object-cover rounded-lg"
+                    className="max-w-full max-h-[70vh] object-contain rounded-lg mx-auto"
+                    priority
                   />
                 ) : (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-lg">
+                  <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-lg">
                     <span className="text-gray-500">カテゴリー選択した写真</span>
                   </div>
                 )}

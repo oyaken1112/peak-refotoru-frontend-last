@@ -129,6 +129,11 @@ export default function CategoryPage() {
 
     if (activeTool !== 'draw') return;
 
+   // タッチイベントの場合はスクロールを防止
+    if ('touches' in e) {
+      e.preventDefault(); // デフォルト動作を防止
+      }
+
     setIsDrawing(true);
     saveCanvasState();
 
@@ -160,6 +165,12 @@ export default function CategoryPage() {
     }
 
     if (!isDrawing || activeTool !== 'draw' || !currentPath) return;
+
+      // タッチイベントの場合はスクロールを防止
+    if ('touches' in e) {
+      e.preventDefault(); // デフォルト動作を防止
+      }
+
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -614,7 +625,7 @@ export default function CategoryPage() {
               </div>
 
               <div
-                className="relative mb-4 overflow-hidden image-container"
+                className="relative mb-4 overflow-hidden image-container w-full h-auto min-h-[300px] md:min-h-[400px]"
                 ref={canvasContainerRef}
                 onWheel={handleWheel}
               >
@@ -634,12 +645,13 @@ export default function CategoryPage() {
                       alt="Room Image"
                       width={640}
                       height={480}
-                      className="w-full h-full object-cover rounded-lg"
+                      className="max-w-full max-h-[70vh] object-contain rounded-lg mx-auto"
                       onLoad={initCanvas}
+                      priority
                     />
                     <canvas
                       ref={canvasRef}
-                      className="drawing-canvas"
+                      className="drawing-canvas max-w-full max-h-[70vh]"
                       onMouseDown={startDrawing}
                       onMouseMove={draw}
                       onMouseUp={stopDrawing}
@@ -651,25 +663,35 @@ export default function CategoryPage() {
                     />
                   </div>
                 ) : (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-lg">
+                  <div className="w-full h-full min-h-[300px] bg-gray-200 flex items-center justify-center rounded-lg">
                     <span className="text-gray-500">写真をアップロードしてください</span>
                   </div>
                 )}
 
                 {/* デモポップアップ */}
                 {showDemoPopup && (
-                  <div className="demo-popup" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                  <div 
+                  className="demo-popup p-4 rounded-lg bg-black bg-opacity-75 max-w-[90%] md:max-w-[80%] text-sm md:text-base" 
+                  style={{ 
+                    position: 'absolute',
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 10,
+                    width: 'auto'
+                  }}
+                  >
                     <p className="font-bold mb-2 text-white">範囲選択の方法</p>
-                    <p className="mb-2 text-white whitespace-nowrap md:whitespace-nowrap">
+                    <p className="mb-2 text-white">
                       1. 指やマウスで写真をなぞって変更したい範囲を選択
                     </p>
-                    <p className="mb-2 text-white whitespace-nowrap md:whitespace-nowrap">
+                    <p className="mb-2 text-white">
                       2. 塗りつぶしボタンで囲った内側を塗りつぶせます
                     </p>
-                    <p className="mb-2 text-white whitespace-nowrap md:whitespace-nowrap">
+                    <p className="mb-2 text-white">
                       3. 選択が完了したら「次へ進む」ボタンをクリック
                     </p>
-                    <p className="text-white whitespace-nowrap md:whitespace-nowrap">
+                    <p className="text-white">
                       ペンの太さ調整や、ひとつ戻る進む等も可能です。
                     </p>
                   </div>
@@ -677,7 +699,7 @@ export default function CategoryPage() {
               </div>
 
               <div className="flex items-center justify-between mb-2">
-                <div className="pen-size-control">
+                <div className="pen-size-control w-full max-w-xs">
                   <div className="pen-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 20h9"></path>
@@ -690,7 +712,7 @@ export default function CategoryPage() {
                     max={10}
                     min={1}
                     step={1}
-                    className="pen-slider"
+                    className="pen-slider mx-2 flex-grow"
                   />
                   <div className="pen-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -699,6 +721,7 @@ export default function CategoryPage() {
                     </svg>
                   </div>
                 </div>
+                <div className="text-center text-sm">太さ: {lineWidth[0]}</div>
               </div>
 
               <div className="flex items-center justify-start gap-2 mb-4">
@@ -722,6 +745,7 @@ export default function CategoryPage() {
                   <button
                     className={`tool-button ${activeTool === 'draw' ? 'tool-button-active' : ''}`}
                     onClick={() => switchTool('draw')}
+                    title="ペン"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 20h9"></path>
@@ -729,25 +753,19 @@ export default function CategoryPage() {
                     </svg>
                   </button>
                   <button
-                    className={`tool-button ${activeTool === 'fill' ? 'tool-button-active' : ''} ${paths.length === 0 ? 'tool-button-inactive' : ''}`}
-                    onClick={() => (paths.length > 0 ? switchTool('fill') : null)}
+                  className={`tool-button ${activeTool === 'fill' ? 'tool-button-active' : ''} ${paths.length === 0 ? 'tool-button-inactive' : ''}`}
+                  onClick={() => (paths.length > 0 ? switchTool('fill') : null)}
+                  title="塗りつぶし"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M19 11h2a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z"></path>
-                      <path d="M7 5V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v2"></path>
-                      <path d="M11 5h10a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H11a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"></path>
-                      <path d="M3 5h4"></path>
-                      <path d="M4 19h4"></path>
-                      <path d="M14 19h7"></path>
-                      <path d="M9 19h1"></path>
-                      <path d="M17.8 11l-3.8-6"></path>
-                      <path d="M11 11V8"></path>
-                      <path d="M4 11h3a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h2"></path>
+                    <path d="M12 2s-8 9.4-8 14a8 8 0 0 0 16 0c0-4.6-8-14-8-14z"></path>
                     </svg>
+
                   </button>
                   <button
                     className={`tool-button ${activeTool === 'zoom' ? 'tool-button-active' : ''}`}
                     onClick={() => switchTool('zoom')}
+                    title="拡大・縮小"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="11" cy="11" r="8"></circle>
