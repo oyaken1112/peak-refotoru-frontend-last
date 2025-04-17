@@ -550,8 +550,8 @@ export default function CategoryPage() {
       </header>
 
       <div className="container mx-auto px-4 py-6">
-        <div className="grid md:grid-cols-12 gap-6">
-          <div className="md:col-span-8 md:col-start-3">
+        {/* コンテナサイズを修正 */}
+        <div className="max-w-2xl mx-auto">
             {/* ステップナビゲーション */}
             <div className="step-nav">
               <div className="step-item">
@@ -612,9 +612,9 @@ export default function CategoryPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 mb-8 relative">
-              <div className="flex items-center justify-between mb-3">
-                <div className="text-base md:text-lg">選択中: {selectedCategory}</div>
+            <div className="bg-white rounded-lg p-6 mb-8 relative shadow-sm"> {/* コンテンツカードの修正 */}
+              <div className="flex items-center justify-between mb-4"> {/* mb-3からmb-4に変更 */}
+                <div className="text-base md:text-lg　font-medium">選択中: {selectedCategory}</div> {/* font-medium追加 */}
                 <button className="bg-[#eb6832] text-white rounded-full p-1" onClick={handleHelpClick}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
@@ -625,7 +625,7 @@ export default function CategoryPage() {
               </div>
 
               <div
-                className="relative mb-4 overflow-hidden image-container w-full h-auto min-h-[300px] md:min-h-[400px]"
+                className="relative mb-6 overflow-hidden image-container w-full h-auto min-h-[300px] md:min-h-[400px] rounded-lg" {/* mb-4からmb-6に変更、rounded-lg追加 */}
                 ref={canvasContainerRef}
                 onWheel={handleWheel}
               >
@@ -698,9 +698,9 @@ export default function CategoryPage() {
                 )}
               </div>
 
-              <div className="flex items-center justify-between mb-2">
-                <div className="pen-size-control w-full max-w-xs">
-                  <div className="pen-icon">
+              <div className="flex flex-col md:flex-row items-center justify-between mb-4"> {/* flex-col、md:flex-row追加 */}
+                <div className="pen-size-control w-full max-w-xs mb-2 md:mb-0"> {/* mb-2、md:mb-0追加 */}">
+                  <div className="pen-icon mr-2"> {/* mr-2追加 */}
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 20h9"></path>
                       <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
@@ -714,7 +714,7 @@ export default function CategoryPage() {
                     step={1}
                     className="pen-slider mx-2 flex-grow"
                   />
-                  <div className="pen-icon">
+                  <div className="pen-icon ml-2"> {/* ml-2追加 */}"
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 20h9"></path>
                       <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
