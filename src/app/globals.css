@@ -588,3 +588,21 @@ body {
     white-space: normal;
   }
 }
+
+/* 範囲選択中の写真タッチ操作の制御用スタイル */
+.drawing-canvas {
+  touch-action: none !important;
+}
+
+.image-container {
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: none;
+  overflow: hidden;
+  position: relative;
+}
+
+/* キャンバスがある間はページ全体のスクロールを防止するクラス */
+.canvas-active {
+  overflow: hidden;
+  height: 100%;
+}
