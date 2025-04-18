@@ -81,72 +81,63 @@ export default function Home() {
               <span className="text-sm">リフォーム会社選び</span>
               <span className="text-sm ml-1">なら</span>
             </div>
-            <p className="text-gray-700 mb-5">国土交通省登録団体に所属の信頼できる会社のみを集めました</p>
+            <p className="text-gray-700 mb-5">国土交通省登録団体に所属の<br />
+            信頼できる会社のみを集めた</p>
             
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-              <a href="#" className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+            <div className="flex justify-center mb-8">
+              <a href="#" className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-l-md">
                 TOPPANが運営する
-              </a>
-              <a href="#" className="inline-flex items-center px-6 py-3 bg-[#eb6832] text-white rounded-md hover:bg-[#d55a25] transition">
-                リフォーム会社紹介サイト
-              </a>
-            </div>
+                </a>
+                <a href="#" className="inline-flex items-center px-6 py-3 bg-[#eb6832] text-white font-bold rounded-r-md">
+                  リフォーム会社紹介サイト
+                  </a>
+                  </div>
           </div>
+{/* イラストセクション */}
+<div className="flex justify-between items-start mb-4">
+  {/* 左側のイラスト */}
+  <div className="text-center">
+    <Image 
+      src="/images/illustration-left.png" 
+      alt="相談する人" 
+      width={180} 
+      height={180}
+      className="mb-2"
+      onError={() => handleImageError('leftIllustration')}
+    />
+  </div>
+  {/* 説明テキスト */}
+  <div className="text-center mt-[-10px] flex-1">
+    <p className="text-base mb-1">
+      ご要望に合わせて厳選した<br />
+      <span className="text-[#eb6832] font-bold">最大4社</span>をご紹介しますので、
+    </p>
+    <p className="text-xl font-bold mb-2 text-[#eb6832]">『比較検討』してください</p>
+    <p className="text-base mb-3">1分で簡単入力！相談だけでもOK</p>
+    <div className="flex justify-center mt-4">
+      <a href="#" className="relative inline-flex items-center px-6 py-3 bg-[#eb6832] text-white rounded-md text-sm sm:text-lg font-medium whitespace-nowrap w-auto max-w-[90vw] sm:max-w-none">
+        <span className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-500 text-white px-2 py-1 text-xs rounded-md font-bold">
+        無料</span>
+    <span className="ml-8 text-center">
+      優良リフォーム会社の<br className="hidden sm:block" />ご紹介はこちら
+    </span>
+  </a>
+  </div>
 
-          {/* イラストセクション */}
-          <div className="flex justify-between items-center mb-8">
-            <div className="text-center">
-              {!imageError.leftIllustration ? (
-                <Image 
-                  src="/images/illustration-left.png" 
-                  alt="相談する人" 
-                  width={180} 
-                  height={180}
-                  className="mb-2"
-                  onError={() => handleImageError('leftIllustration')}
-                />
-              ) : (
-                <div className="w-44 h-44 bg-gray-200 rounded-full flex items-center justify-center mb-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="8" r="5"/>
-                    <path d="M20 21a8 8 0 0 0-16 0"/>
-                  </svg>
-                </div>
-              )}
-            </div>
-            <div className="text-center">
-              {!imageError.rightIllustration ? (
-                <Image 
-                  src="/images/illustration-right.png" 
-                  alt="担当者" 
-                  width={180} 
-                  height={180}
-                  className="mb-2"
-                  onError={() => handleImageError('rightIllustration')}
-                />
-              ) : (
-                <div className="w-44 h-44 bg-gray-200 rounded-full flex items-center justify-center mb-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="8" r="5"/>
-                    <path d="M20 21a8 8 0 0 0-16 0"/>
-                  </svg>
-                </div>
-              )}
-            </div>
-          </div>
+  </div>
+  {/* 右側のイラスト */}
+  <div className="text-center">
+    <Image 
+      src="/images/illustration-right.png" 
+      alt="担当者" 
+      width={180} 
+      height={180}
+      className="mb-2"
+      onError={() => handleImageError('rightIllustration')}
+    />
+  </div>
+</div>
 
-          {/* 説明テキスト */}
-          <div className="text-center mb-10">
-            <p className="text-base mb-2">ご要望に合わせて厳選した<span className="text-[#eb6832] font-bold">最大4社</span>をご紹介しますので、</p>
-            <p className="text-xl font-bold mb-3 text-[#eb6832]">『比較検討』してください</p>
-            <p className="text-base mb-6">1分で簡単入力！相談だけでもOK</p>
-            <div className="flex justify-center">
-              <a href="#" className="relative inline-flex items-center px-10 py-4 bg-[#eb6832] text-white rounded-md hover:bg-[#d55a25] transition text-lg font-medium">
-                <span className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-500 text-white px-2 py-1 text-xs rounded-md font-bold">無料</span>
-                <span className="ml-8">優良リフォーム会社のご紹介はこちら</span>
-              </a>
-            </div>
-          </div>
 
           {/* 新サービスセクション */}
           <div className="mt-14">
@@ -155,13 +146,13 @@ export default function Home() {
                 <span className="bg-red-600 text-white px-4 py-1 rounded-md text-sm font-bold">新サービス</span>
               </div>
               <div className="border border-[#eb6832] bg-[#fff9f0] p-4 rounded-lg text-center">
-                <p className="text-lg font-medium text-[#eb6832]">まずはイメージを膨らませたい方はこちら</p>
+                <p className="text-lg font-medium text-[#eb6832]">まずはイメージを膨らませたい方は<br />こちら</p>
               </div>
             </div>
             
             {/* Before/After画像 */}
-            <div className="mt-4 relative">
-              <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
+            <div className="mt-4 flex justify-center">
+              <div className="relative w-4/5 h-[360px] rounded-lg overflow-hidden shadow-lg">
                 {!imageError.beforeRoom ? (
                   <Image 
                     src="/images/before-room.jpg" 
@@ -180,7 +171,7 @@ export default function Home() {
                 </div>
                 
                 {/* After画像（右下に表示） */}
-                <div className="absolute bottom-6 right-6 w-2/5 h-2/5 border-4 border-white rounded-lg overflow-hidden shadow-lg">
+                <div className="absolute bottom-4 right-4 w-3/5 h-3/5 border-4 border-white rounded-lg overflow-hidden shadow-xl">
                   {!imageError.afterRoom ? (
                     <Image 
                       src="/images/after-room.jpg" 
@@ -203,7 +194,8 @@ export default function Home() {
             
             {/* 説明文とボタン */}
             <div className="mt-6 text-center">
-              <p className="mb-6">壁・床・ドアなど、好きな素材を選んで、リフォーム後のイメージを簡単に作成できます。</p>
+              <p className="mb-6">壁・床・ドアなど、好きな素材を選んで、<br />
+              リフォーム後イメージを簡単に作成できます。</p>
               <Link href="/1-upload" className="inline-flex items-center px-6 py-3 border border-[#eb6832] text-[#eb6832] rounded-md hover:bg-orange-50 transition">
                 理想のお部屋イメージ画像を作る
               </Link>
@@ -213,7 +205,7 @@ export default function Home() {
           {/* 参考画像セクション */}
           <div className="mt-16">
             <h2 className="text-2xl font-bold text-center mb-4">参考画像から選びたい方へ</h2>
-            <p className="text-center mb-8">リフォームしたい箇所やお好きなスタイルを選びその中から、<br />あなたが理想とするお部屋のイメージ画像を見つけてください。</p>
+            <p className="text-center mb-8">リフォームしたい箇所や好きなスタイルを選び<br />その中からあなたが理想とする<br />お部屋のイメージ画像を見つけてください。</p>
             
             {/* 画像ギャラリー */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -225,20 +217,18 @@ export default function Home() {
                       alt={style.name} 
                       width={300}
                       height={200}
-                      className="w-full h-48 object-cover transition transform group-hover:scale-105"
+                      className="w-full h-48 object-cover"
                       onError={() => handleStyleImageError(index)}
                     />
                   ) : (
                     <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-500">{style.name}</span>
-                    </div>
-                  )}
-                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-center">
-                    {style.name}
-                  </div>
-                </div>
-              ))}
-            </div>
+          <span className="text-gray-500">{style.name}</span>
+        </div>
+      )}
+      {/* グレー帯とテキスト表示は削除済み */}
+    </div>
+  ))}
+</div>
             
             <div className="text-center">
               <a href="#" className="inline-block px-6 py-2 text-gray-700 hover:text-gray-900">
@@ -267,7 +257,7 @@ export default function Home() {
               )}
             </div>
             <h3 className="text-lg font-bold mb-4">このマークは安心リフォームの証</h3>
-            <p className="mb-2">国土交通省の制度に登録された優良な団体とその団体の構成員であるリフォーム業者だけが使用できます</p>
+            <p className="mb-2">国土交通省の制度に登録された優良な団体と<br />その団体の構成員である<br />リフォーム業者だけが使用できます</p>
             <p className="text-[#eb6832] font-medium">この印の会社は<span className="font-bold">安心</span>リフォームのマークです。</p>
           </div>
         </div>

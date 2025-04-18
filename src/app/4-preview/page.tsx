@@ -229,7 +229,8 @@ export default function PreviewPage() {
 
               <div className="bg-[#fff9e0] p-4 rounded-lg mb-6">
                 <p className="text-sm md:text-base text-center text-gray-700">
-                  国土交通大臣登録団体の事業者を最大4社までご紹介します
+                  国土交通大臣登録団体の事業者を<br />
+                  最大4社までご紹介します
                 </p>
               </div>
 

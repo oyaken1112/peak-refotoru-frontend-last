@@ -152,9 +152,8 @@ export default function UploadPage() {
                     <polyline points="21 15 16 10 5 21"></polyline>
                   </svg>
                 </div>
-                <p className="text-lg mb-3">ここに写真をドラッグ＆ドロップ</p>
+                <p className="text-lg mb-3">ここからアップロード</p>
                 <p className="text-sm text-gray-500 mb-4">または下のボタンから</p>
-                <p className="text-sm text-gray-500">対応形式: JPEG, PNG, SVG, HEIF</p>
               </div>
             </>
           )}
@@ -178,18 +177,29 @@ export default function UploadPage() {
           </div>
         )}
 
-        {/* プライバシーポリシー */}
-        <div className="max-w-xl mx-auto mt-8 bg-blue-50 p-4 rounded-lg flex items-start">
-          <div className="text-blue-500 mr-3 mt-1 flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-          </div>
-          <div>
-            <h3 className="font-medium mb-2">プライバシー保護について</h3>
-            <p className="text-sm text-gray-600">アップロードされた写真は安全なクラウドストレージに保存され、リフォームイメージの作成にのみ使用されます。個人情報保護のため、写真は暗号化され、第三者に共有されることはありません。</p>
-          </div>
-        </div>
+{/* プライバシーポリシー */}
+<div className="max-w-xl mx-auto mt-8 bg-blue-50 p-4 rounded-lg">
+  <div className="flex justify-center items-center mb-2">
+    {/* アイコン */}
+    <div className="text-blue-500 mr-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </svg>
+    </div>
+    {/* 見出しテキスト */}
+    <h3 className="font-medium text-center text-base ">プライバシー保護について</h3>
+  </div>
+
+  {/* 本文テキスト */}
+  <p className="text-sm text-gray-600 text-center whitespace-pre-line">
+    アップロードされた写真は<br />
+    安全なクラウドストレージに保存され、{'\n'}
+    リフォームイメージの作成にのみ使用されます。{'\n'}
+    個人情報保護のため、写真は暗号化され、{'\n'}
+    第三者に共有されることはありません。
+  </p>
+</div>
+
 
         {/* ナビゲーションボタン */}
         <div className="max-w-xl mx-auto mt-8 flex justify-between">
