@@ -84,60 +84,78 @@ export default function Home() {
             <p className="text-gray-700 mb-5">国土交通省登録団体に所属の<br />
             信頼できる会社のみを集めた</p>
             
+            {/* バナーのサイズを縮小 */}
             <div className="flex justify-center mb-8">
-              <a href="#" className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-l-md">
-                TOPPANが運営する
+              <div className="inline-flex max-w-xs">
+                <a href="#" className="px-3 py-2 text-xs bg-blue-600 text-white rounded-l-md font-medium">
+                  TOPPANが運営する
                 </a>
-                <a href="#" className="inline-flex items-center px-6 py-3 bg-[#eb6832] text-white font-bold rounded-r-md">
+                <a href="#" className="px-3 py-2 text-xs bg-[#eb6832] text-white font-bold rounded-r-md">
                   リフォーム会社紹介サイト
-                  </a>
-                  </div>
+                </a>
+              </div>
+            </div>
           </div>
-{/* イラストセクション */}
-<div className="flex justify-between items-start mb-4">
-  {/* 左側のイラスト */}
-  <div className="text-center">
-    <Image 
-      src="/images/illustration-left.png" 
-      alt="相談する人" 
-      width={180} 
-      height={180}
-      className="mb-2"
-      onError={() => handleImageError('leftIllustration')}
-    />
-  </div>
-  {/* 説明テキスト */}
-  <div className="text-center mt-[-10px] flex-1">
-    <p className="text-base mb-1">
-      ご要望に合わせて厳選した<br />
-      <span className="text-[#eb6832] font-bold">最大4社</span>をご紹介しますので、
-    </p>
-    <p className="text-xl font-bold mb-2 text-[#eb6832]">『比較検討』してください</p>
-    <p className="text-base mb-3">1分で簡単入力！相談だけでもOK</p>
-    <div className="flex justify-center mt-4">
-      <a href="#" className="relative inline-flex items-center px-6 py-3 bg-[#eb6832] text-white rounded-md text-sm sm:text-lg font-medium whitespace-nowrap w-auto max-w-[90vw] sm:max-w-none">
-        <span className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-500 text-white px-2 py-1 text-xs rounded-md font-bold">
-        無料</span>
-    <span className="ml-8 text-center">
-      優良リフォーム会社の<br className="hidden sm:block" />ご紹介はこちら
-    </span>
-  </a>
-  </div>
 
-  </div>
-  {/* 右側のイラスト */}
-  <div className="text-center">
-    <Image 
-      src="/images/illustration-right.png" 
-      alt="担当者" 
-      width={180} 
-      height={180}
-      className="mb-2"
-      onError={() => handleImageError('rightIllustration')}
-    />
-  </div>
-</div>
+          {/* イラストとテキストのセクション - レスポンシブ対応 */}
+          <div className="flex py-4 mb-4">
+            {/* 左側のイラスト - PCでは大きく、スマホでは小さく */}
+            <div className="w-1/5 pr-2 flex justify-center">
+              {!imageError.leftIllustration ? (
+                <Image 
+                  src="/images/illustration-left.png" 
+                  alt="相談する人" 
+                  width={90}
+                  height={90}
+                  className="object-contain w-auto h-auto md:w-[120px] md:h-[120px]"
+                  onError={() => handleImageError('leftIllustration')}
+                />
+              ) : (
+                <div className="w-20 h-20 md:w-28 md:h-28 bg-gray-200 rounded-full flex items-center justify-center">
+                  <span className="text-gray-400 text-xs">イラスト</span>
+                </div>
+              )}
+            </div>
+            
+            {/* 中央テキスト - 固定幅で両サイドに均等な余白 */}
+            <div className="w-3/5 px-2 text-center">
+              <p className="text-base">
+                ご要望に合わせて厳選した <span className="text-[#eb6832] font-bold">最大4社</span>をご紹介しますので、
+              </p>
+              <p className="text-xl font-bold text-[#eb6832]">『比較検討』してください</p>
+              <p className="text-base">1分で簡単入力！相談だけでもOK</p>
+            </div>
+            
+            {/* 右側のイラスト - PCでは大きく、スマホでは小さく */}
+            <div className="w-1/5 pl-2 flex justify-center">
+              {!imageError.rightIllustration ? (
+                <Image 
+                  src="/images/illustration-right.png" 
+                  alt="担当者" 
+                  width={90}
+                  height={90}
+                  className="object-contain w-auto h-auto md:w-[120px] md:h-[120px]"
+                  onError={() => handleImageError('rightIllustration')}
+                />
+              ) : (
+                <div className="w-20 h-20 md:w-28 md:h-28 bg-gray-200 rounded-full flex items-center justify-center">
+                  <span className="text-gray-400 text-xs">イラスト</span>
+                </div>
+              )}
+            </div>
+          </div>
 
+          {/* 無料ボタン */}
+          <div className="flex justify-center mb-10">
+            <a href="#" className="relative inline-flex items-center px-6 py-3 bg-[#eb6832] text-white rounded-md text-sm sm:text-lg font-medium whitespace-nowrap w-auto max-w-[90vw] sm:max-w-none">
+              <span className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-500 text-white px-2 py-1 text-xs rounded-md font-bold">
+                無料
+              </span>
+              <span className="ml-8 text-center">
+                優良リフォーム会社の<br className="hidden sm:block" />ご紹介はこちら
+              </span>
+            </a>
+          </div>
 
           {/* 新サービスセクション */}
           <div className="mt-14">
@@ -150,55 +168,67 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Before/After画像 */}
-            <div className="mt-4 flex justify-center">
-              <div className="relative w-4/5 h-[360px] rounded-lg overflow-hidden shadow-lg">
-                {!imageError.beforeRoom ? (
-                  <Image 
-                    src="/images/before-room.jpg" 
-                    alt="リフォーム前" 
-                    fill
-                    className="object-cover"
-                    onError={() => handleImageError('beforeRoom')}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                    <span className="text-gray-500">Before画像</span>
+            {/* Before/After比較表示 */}
+            <div className="mt-6">
+              {/* 横並び比較表示 */}
+              <div className="flex flex-row space-x-4 justify-center">
+                {/* Before画像 */}
+                <div className="flex-1 max-w-[45%] relative">
+                  <div className="relative h-48 rounded-lg overflow-hidden shadow-md">
+                    {!imageError.beforeRoom ? (
+                      <Image 
+                        src="/images/before-room.jpg" 
+                        alt="リフォーム前" 
+                        fill
+                        sizes="(max-width: 768px) 45vw, 300px"
+                        className="object-cover"
+                        onError={() => handleImageError('beforeRoom')}
+                        priority
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                        <span className="text-gray-500">Before画像</span>
+                      </div>
+                    )}
+                    <div className="absolute top-2 left-2 bg-gray-800 bg-opacity-70 text-white px-3 py-1 rounded-md">
+                      Before
+                    </div>
                   </div>
-                )}
-                <div className="absolute top-4 left-4 bg-gray-800 bg-opacity-70 text-white px-3 py-1 rounded-md">
-                  Before
                 </div>
                 
-                {/* After画像（右下に表示） */}
-                <div className="absolute bottom-4 right-4 w-3/5 h-3/5 border-4 border-white rounded-lg overflow-hidden shadow-xl">
-                  {!imageError.afterRoom ? (
-                    <Image 
-                      src="/images/after-room.jpg" 
-                      alt="リフォーム後" 
-                      fill
-                      className="object-cover"
-                      onError={() => handleImageError('afterRoom')}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 text-sm">After画像</span>
+                {/* After画像 */}
+                <div className="flex-1 max-w-[45%] relative">
+                  <div className="relative h-48 rounded-lg overflow-hidden shadow-md">
+                    {!imageError.afterRoom ? (
+                      <Image 
+                        src="/images/after-room.jpg" 
+                        alt="リフォーム後" 
+                        fill
+                        sizes="(max-width: 768px) 45vw, 300px"
+                        className="object-cover"
+                        onError={() => handleImageError('afterRoom')}
+                        priority
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-300 rounded-lg flex items-center justify-center">
+                        <span className="text-gray-600">After画像</span>
+                      </div>
+                    )}
+                    <div className="absolute top-2 left-2 bg-gray-800 bg-opacity-70 text-white px-3 py-1 rounded-md">
+                      After
                     </div>
-                  )}
-                  <div className="absolute top-1 left-1 bg-gray-800 bg-opacity-70 text-white px-2 py-0.5 rounded text-xs">
-                    After
                   </div>
                 </div>
               </div>
-            </div>
-            
-            {/* 説明文とボタン */}
-            <div className="mt-6 text-center">
-              <p className="mb-6">壁・床・ドアなど、好きな素材を選んで、<br />
-              リフォーム後イメージを簡単に作成できます。</p>
-              <Link href="/1-upload" className="inline-flex items-center px-6 py-3 border border-[#eb6832] text-[#eb6832] rounded-md hover:bg-orange-50 transition">
-                理想のお部屋イメージ画像を作る
-              </Link>
+              
+              {/* 説明文とボタン */}
+              <div className="mt-6 text-center">
+                <p className="mb-6">壁・床・ドアなど、好きな素材を選んで、<br />
+                リフォーム後イメージを簡単に作成できます。</p>
+                <Link href="/1-upload" className="inline-flex items-center px-6 py-3 border border-[#eb6832] text-[#eb6832] rounded-md hover:bg-orange-50 transition">
+                  理想のお部屋イメージ画像を作る
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -222,13 +252,12 @@ export default function Home() {
                     />
                   ) : (
                     <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-          <span className="text-gray-500">{style.name}</span>
-        </div>
-      )}
-      {/* グレー帯とテキスト表示は削除済み */}
-    </div>
-  ))}
-</div>
+                      <span className="text-gray-500">{style.name}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
             
             <div className="text-center">
               <a href="#" className="inline-block px-6 py-2 text-gray-700 hover:text-gray-900">

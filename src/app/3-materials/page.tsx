@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef, Suspense } from 'react'; // Suspenseを追加
+import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useImageContext } from '@/lib/image-context';
 import { useRouter } from 'next/navigation';
 
-
-// 新しいコンポーネント - 元のMaterialsPageの内容をすべてここに移す
+// MaterialsContent コンポーネント
 function MaterialsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
@@ -19,7 +18,9 @@ function MaterialsContent() {
   const [showMaterialInfo, setShowMaterialInfo] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [touchStartX, setTouchStartX] = useState(0);
+  const [imageHeight, setImageHeight] = useState(0); // 画像の高さを追跡
   const materialsContainerRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
   const { categoryImage, setMaterialImage } = useImageContext();
   const router = useRouter();
 
@@ -40,7 +41,8 @@ function MaterialsContent() {
   useEffect(() => {
     // Check if the device is mobile or tablet
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      const isMobileView = window.innerWidth <= 768;
+      setIsMobile(isMobileView);
     };
 
     checkMobile();
@@ -50,6 +52,12 @@ function MaterialsContent() {
       window.removeEventListener('resize', checkMobile);
     };
   }, []);
+
+  // 画像がロードされたときに高さを更新する処理
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    setImageHeight(img.clientHeight);
+  };
 
   // カテゴリー別の素材データ（実際の実装ではAPIから取得など）
   const materials = {
@@ -239,7 +247,7 @@ function MaterialsContent() {
         <div className="grid md:grid-cols-12 gap-6">
           <div className="md:col-span-8 md:col-start-3">
             {/* ステップナビゲーション */}
-            <div className="step-nav">
+            <div className="step-nav mb-6">
               <div className="step-item">
                 <div className="step-circle step-completed">1</div>
                 <div className="step-label">
@@ -275,15 +283,32 @@ function MaterialsContent() {
 
             <div className="bg-white rounded-lg p-4 mb-8 relative">
               <div className="text-base md:text-lg mb-3">選択中: {selectedCategory}</div>
-              <div className="relative mb-6 image-container">
+              
+              {/* 画像コンテナ - 高さを自動調整するように変更 */}
+              <div 
+                className="relative mb-6 image-container"
+                ref={imageContainerRef}
+                style={{ 
+                  maxHeight: isMobile ? '40vh' : '60vh', 
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
                 {categoryImage ? (
                   <Image
                     src={categoryImage}
                     alt="Room Image"
-                    width={640}
-                    height={480}
-                    className="max-w-full max-h-[70vh] object-contain rounded-lg mx-auto"
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="max-w-full h-auto object-contain rounded-lg"
+                    style={{ 
+                      maxHeight: isMobile ? '35vh' : '55vh', 
+                      width: 'auto' 
+                    }}
                     priority
+                    onLoad={handleImageLoad}
                   />
                 ) : (
                   <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-lg">
@@ -299,10 +324,11 @@ function MaterialsContent() {
                 )}
               </div>
 
-              <div className="relative">
+              {/* 素材選択エリア - スマホで最適化 */}
+              <div className="relative mb-4">
                 <div
                   ref={materialsContainerRef}
-                  className="material-grid mb-3"
+                  className={`material-grid ${isMobile ? 'material-grid-mobile' : ''}`}
                   onTouchStart={handleTouchStart}
                   onTouchMove={handleTouchMove}
                 >
@@ -313,7 +339,7 @@ function MaterialsContent() {
                       onClick={() => handleMaterialClick(material.id)}
                     >
                       {'image' in material && material.image ? (
-                        <div className="h-32">
+                        <div className={`${isMobile ? 'h-20' : 'h-28'} overflow-hidden`}>
                           <Image
                             src={typeof material.image === 'string' ? material.image : '/images/placeholder.jpg'}
                             alt={material.name}
@@ -324,17 +350,17 @@ function MaterialsContent() {
                         </div>
                       ) : (
                         <div 
-                          className="h-32 flex items-center justify-center"
+                          className={`${isMobile ? 'h-20' : 'h-28'} flex items-center justify-center`}
                           style={{ 
                             backgroundColor: getMaterialColorStyle(material.color)
                           }}
                         >
-                          <span className={getTextColor(material.color)}>
+                          <span className={`${getTextColor(material.color)} text-center px-2 ${isMobile ? 'text-sm' : 'text-base'}`}>
                             {material.name}
                           </span>
                         </div>
                       )}
-                      <div className="material-info">
+                      <div className={`material-info ${isMobile ? 'text-xs' : 'text-sm'} py-2`}>
                         {material.name}
                         <br />({material.color})
                       </div>
@@ -342,6 +368,7 @@ function MaterialsContent() {
                   ))}
                 </div>
 
+                {/* ページネーション */}
                 <div className="flex justify-between items-center mt-4">
                   <button
                     className="w-10 h-10 bg-[#eb6832] rounded-full flex items-center justify-center"
@@ -399,10 +426,140 @@ function MaterialsContent() {
           </div>
         </div>
       </div>
+
+      {/* スタイル定義 */}
+      <style jsx>{`
+        /* ステップナビゲーション */
+        .step-nav {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 10px;
+        }
+        
+        .step-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        
+        .step-circle {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          margin-bottom: 8px;
+        }
+        
+        .step-completed {
+          background-color: #eb6832;
+          color: white;
+        }
+        
+        .step-active {
+          background-color: #eb6832;
+          color: white;
+        }
+        
+        .step-inactive {
+          background-color: #e2e8f0;
+          color: #718096;
+        }
+        
+        .step-line {
+          flex-grow: 1;
+          height: 2px;
+          margin: 0 5px;
+        }
+        
+        .line-active {
+          background-color: #eb6832;
+        }
+        
+        .line-inactive {
+          background-color: #e2e8f0;
+        }
+
+        /* 素材グリッド */
+        .material-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+        }
+        
+        /* スマホ向け素材グリッド - 高さを小さく */
+        .material-grid-mobile {
+          gap: 8px;
+        }
+        
+        .material-item {
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          overflow: hidden;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .material-item:hover {
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .material-item.selected {
+          border: 2px solid #eb6832;
+          box-shadow: 0 4px 12px rgba(235, 104, 50, 0.2);
+        }
+        
+        .material-info {
+          padding: 8px;
+          text-align: center;
+          flex-grow: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #f8f9fa;
+        }
+        
+        /* エラーメッセージ */
+        .error-message {
+          color: #e53e3e;
+          text-align: center;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        
+        .error-message.show {
+          opacity: 1;
+        }
+        
+        /* モバイルでのスタイル調整 */
+        @media (max-width: 768px) {
+          .step-circle {
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+          }
+          
+          .step-label {
+            font-size: 10px;
+          }
+          
+          .material-info {
+            padding: 4px;
+            line-height: 1.2;
+          }
+        }
+      `}</style>
     </div>
   );
 }
-// 新しいMaterialsPage - これをエクスポート
+
+// MaterialsPage
 export default function MaterialsPage() {
   return (
     <Suspense fallback={<div className="min-h-screen bg-[#fdf6f2] flex items-center justify-center">読み込み中...</div>}>
