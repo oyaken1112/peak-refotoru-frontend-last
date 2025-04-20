@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const [imageError, setImageError] = useState({
     logo: false,
     leftIllustration: false,
@@ -42,9 +43,9 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#fdf6f2]">
-      {/* ヘッダー */}
-      <header className="p-4 flex justify-between items-center bg-white shadow-sm">
+    <div className="min-h-screen bg-[#fff9f0]">
+      {/* ヘッダー + アコーディオンメニュー */}
+      <header className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white shadow-sm">
         <div className="flex items-center">
           {!imageError.logo ? (
             <Image 
@@ -62,21 +63,55 @@ export default function Home() {
           )}
           <span className="text-xl font-bold">リフォトル</span>
         </div>
-        <button className="p-2 rounded-full hover:bg-gray-100">
+
+        {/* ハンバーガー */}
+        <button
+          className="p-2 rounded-full hover:bg-gray-100 focus:outline-none"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
+
+        {/* アコーディオンメニュー */}
+        {menuOpen && (
+          <nav className="absolute top-full left-0 w-full bg-white border-t border-orange-200 shadow-md z-50">
+            <ul className="flex flex-col p-6 space-y-4">
+              <li>
+                <Link href="/1-upload" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                理想のお部屋イメージ画像を作る
+                </Link>
+                </li>
+                <li>
+                  <a href="https://x.gd/wlwOK" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                  優良リフォーム会社のご紹介はこちら
+                  </a>
+                  </li>
+                  <li>
+                    <a href="https://x.gd/pFA2q" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                    イメージ画像を探す
+                    </a>
+                    </li>
+                    <li>
+                      <a href="https://forest.toppan.com/refotoru/about/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                      リフォトルとは
+                      </a>
+                      </li>
+                      </ul>
+          </nav>
+        )}
       </header>
+      <main className="container mx-auto px-4 py-6 pt-24"></main>
 
       {/* メインコンテンツ */}
       <main className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
           {/* タイトルセクション */}
           <div className="text-center mb-4">
-            <h1 className="text-3xl font-bold mb-4">本当に <span className="text-[#eb6832]">安心</span>できる</h1>
+            <h1 className="text-3xl font-bold mb-4">本当に <span className="text-[#f87e42]">安心</span>できる</h1>
             <div className="inline-flex items-center py-1 px-4 bg-gray-200 rounded-md mb-4">
               <span className="text-sm">リフォーム会社選び</span>
               <span className="text-sm ml-1">なら</span>
@@ -84,13 +119,13 @@ export default function Home() {
             <p className="text-gray-700 mb-5">国土交通省登録団体に所属の<br />
             信頼できる会社のみを集めた</p>
             
-            {/* バナーのサイズを縮小 */}
+            {/* バナーのサイズを縮小 - 現状維持（要望通り） */}
             <div className="flex justify-center mb-8">
               <div className="inline-flex max-w-xs">
                 <a href="#" className="px-3 py-2 text-xs bg-blue-600 text-white rounded-l-md font-medium">
                   TOPPANが運営する
                 </a>
-                <a href="#" className="px-3 py-2 text-xs bg-[#eb6832] text-white font-bold rounded-r-md">
+                <a href="#" className="px-3 py-2 text-xs bg-[#f87e42] text-white font-bold rounded-r-md">
                   リフォーム会社紹介サイト
                 </a>
               </div>
@@ -99,7 +134,6 @@ export default function Home() {
 
           {/* イラストとテキストのセクション - レスポンシブ対応 */}
           <div className="flex py-4 mb-4">
-            {/* 左側のイラスト - PCでは大きく、スマホでは小さく */}
             <div className="w-1/5 pr-2 flex justify-center">
               {!imageError.leftIllustration ? (
                 <Image 
@@ -117,16 +151,14 @@ export default function Home() {
               )}
             </div>
             
-            {/* 中央テキスト - 固定幅で両サイドに均等な余白 */}
             <div className="w-3/5 px-2 text-center">
               <p className="text-base">
-                ご要望に合わせて厳選した <span className="text-[#eb6832] font-bold">最大4社</span>をご紹介しますので、
+                ご要望に合わせて厳選した <span className="text-[#f87e42] font-bold">最大4社</span>をご紹介しますので、
               </p>
-              <p className="text-xl font-bold text-[#eb6832]">『比較検討』してください</p>
+              <p className="text-xl font-bold text-[#f87e42]">『比較検討』してください</p>
               <p className="text-base">1分で簡単入力！相談だけでもOK</p>
             </div>
             
-            {/* 右側のイラスト - PCでは大きく、スマホでは小さく */}
             <div className="w-1/5 pl-2 flex justify-center">
               {!imageError.rightIllustration ? (
                 <Image 
@@ -145,26 +177,28 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 無料ボタン */}
+          {/* 無料ボタン - 左から右に色反転 */}
           <div className="flex justify-center mb-10">
-            <a href="#" className="relative inline-flex items-center px-6 py-3 bg-[#eb6832] text-white rounded-md text-sm sm:text-lg font-medium whitespace-nowrap w-auto max-w-[90vw] sm:max-w-none">
-              <span className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-500 text-white px-2 py-1 text-xs rounded-md font-bold">
+            <a href="https://x.gd/wlwOK" className="flip-button-lr relative inline-flex items-center px-6 py-3 text-white rounded-md text-sm sm:text-lg font-medium whitespace-nowrap w-auto max-w-[90vw] sm:max-w-none">
+              <span className="absolute left-2 top-1/2 -translate-y-1/2 bg-red-500 text-white px-2 py-1 text-xs rounded-md font-bold z-10">
                 無料
               </span>
-              <span className="ml-8 text-center">
-                優良リフォーム会社の<br className="hidden sm:block" />ご紹介はこちら
+              <span className="ml-8 text-center z-10">
+                優良会社のご紹介
               </span>
             </a>
           </div>
 
-          {/* 新サービスセクション */}
+          {/* 新サービスセクション - 光る枠でリストアップ */}
           <div className="mt-14">
             <div className="relative">
               <div className="absolute -top-4 left-0 z-10">
                 <span className="bg-red-600 text-white px-4 py-1 rounded-md text-sm font-bold">新サービス</span>
               </div>
-              <div className="border border-[#eb6832] bg-[#fff9f0] p-4 rounded-lg text-center">
-                <p className="text-lg font-medium text-[#eb6832]">まずはイメージを膨らませたい方は<br />こちら</p>
+              <div className="glowing-box text-center">
+                <Link href="/1-upload" className="inline-block py-1 px-1 hover:opacity-90 transition-opacity">
+                  <p className="text-lg font-medium text-[#f87e42]">まずはイメージを膨らませたい方は<br />こちら</p>
+                </Link>
               </div>
             </div>
             
@@ -221,11 +255,11 @@ export default function Home() {
                 </div>
               </div>
               
-              {/* 説明文とボタン */}
+              {/* 説明文とボタン - 左から右に色反転 */}
               <div className="mt-6 text-center">
                 <p className="mb-6">壁・床・ドアなど、好きな素材を選んで、<br />
                 リフォーム後イメージを簡単に作成できます。</p>
-                <Link href="/1-upload" className="inline-flex items-center px-6 py-3 border border-[#eb6832] text-[#eb6832] rounded-md hover:bg-orange-50 transition">
+                <Link href="/1-upload" className="flip-button-lr inline-flex items-center px-6 py-3">
                   理想のお部屋イメージ画像を作る
                 </Link>
               </div>
@@ -259,8 +293,9 @@ export default function Home() {
               ))}
             </div>
             
+            {/* オレンジに文字色変更し、オレンジの下線を表示 */}
             <div className="text-center">
-              <a href="#" className="inline-block px-6 py-2 text-gray-700 hover:text-gray-900">
+              <a href="https://x.gd/pFA2q" className="underline-button inline-block px-6 py-2">
                 イメージ画像を探す
               </a>
             </div>
@@ -286,8 +321,8 @@ export default function Home() {
               )}
             </div>
             <h3 className="text-lg font-bold mb-4">このマークは安心リフォームの証</h3>
-            <p className="mb-2">国土交通省の制度に登録された優良な団体と<br />その団体の構成員である<br />リフォーム業者だけが使用できます</p>
-            <p className="text-[#eb6832] font-medium">この印の会社は<span className="font-bold">安心</span>リフォームのマークです。</p>
+            <p className="mb-2">国土交通省の制度に登録された優良な団体と<br />その団体の構成員である<br />リフォーム業者だけが使用できる</p>
+            <p className="text-[#f87e42] font-medium"><span className="font-bold">安心</span>リフォームのマークです。</p>
           </div>
         </div>
       </main>
@@ -296,10 +331,10 @@ export default function Home() {
       <footer className="bg-black text-white py-6 mt-16">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 mb-4 text-sm">
-            <a href="#" className="hover:underline">利用規約</a>
-            <a href="#" className="hover:underline">プライバシーポリシー</a>
-            <a href="#" className="hover:underline">お問い合わせ</a>
-            <a href="#" className="hover:underline">企業情報</a>
+            <a href="https://forest.toppan.com/refotoru/terms/" className="hover:underline">利用規約</a>
+            <a href="https://forest.toppan.com/refotoru/privacypolicy/" className="hover:underline">プライバシーポリシー</a>
+            <a href="https://x.gd/7Tv2I" className="hover:underline">お問い合わせ</a>
+            <a href="https://forest.toppan.com/refotoru/company/" className="hover:underline">企業情報</a>
           </div>
           <div className="flex justify-center items-center">
             {!imageError.logoWhite ? (

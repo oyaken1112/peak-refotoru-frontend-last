@@ -23,6 +23,8 @@ function MaterialsContent() {
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const { categoryImage, setMaterialImage } = useImageContext();
   const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
   useEffect(() => {
     // 画面遷移時に最上部にスクロールする
@@ -59,7 +61,7 @@ function MaterialsContent() {
     setImageHeight(img.clientHeight);
   };
 
-  // カテゴリー別の素材データ（実際の実装ではAPIから取得など）
+  // カテゴリー別の素材データ（実際の実装ではAPIから取得するので変更！）
   const materials = {
     壁: [
       { id: 1, name: 'ホワイトペイント', color: '白色' },
@@ -189,7 +191,7 @@ function MaterialsContent() {
     }
   };
 
-  // 素材の色に対応するスタイルを取得
+  // 素材の色に対応するスタイルを取得(バックエンドと繋いだら変更して！)
   const getMaterialColorStyle = (color: string) => {
     const colorMap: Record<string, string> = {
       '白色': '#f8f9fa',
@@ -219,8 +221,9 @@ function MaterialsContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fdf6f2]">
-      <header className="p-4 flex justify-between items-center bg-white shadow-sm">
+    <div className="min-h-screen bg-[#fff9f0]">
+{/* ヘッダー */}
+<header className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white shadow-sm">
         <Link href="/" className="flex items-center">
           <Image 
             src="/images/logo.png" 
@@ -234,20 +237,50 @@ function MaterialsContent() {
           />
           <span className="text-xl font-bold">リフォトル</span>
         </Link>
-        <button className="p-2 rounded-full hover:bg-gray-100">
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="p-2 rounded-full hover:bg-gray-100 focus:outline-none"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
+        {menuOpen && (
+          <nav className="absolute top-full left-0 w-full bg-white border-t border-orange-200 shadow-md z-50">
+            <ul className="flex flex-col p-6 space-y-4">
+              <li>
+                <Link href="/1-upload" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                理想のお部屋イメージ画像を作る
+                </Link>
+                </li>
+                <li>
+                  <a href="https://x.gd/wlwOK" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                  優良リフォーム会社のご紹介はこちら
+                  </a>
+                  </li>
+                  <li>
+                    <a href="https://x.gd/pFA2q" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                    イメージ画像を探す
+                    </a>
+                    </li>
+                    <li>
+                      <a href="https://forest.toppan.com/refotoru/about/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                      リフォトルとは
+                      </a>
+                      </li>
+                      </ul>
+          </nav>
+        )}
       </header>
+      <main className="container mx-auto px-4 py-2 pt-20"></main>
 
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid md:grid-cols-12 gap-6">
+      <div className="container mx-auto px-4 py-2">
+        <div className="grid md:grid-cols-12 gap-4">
           <div className="md:col-span-8 md:col-start-3">
-            {/* ステップナビゲーション */}
-            <div className="step-nav mb-6">
+            {/* ステップナビゲーション - 余白を削減 */}
+            <div className="step-nav mb-3">
               <div className="step-item">
                 <div className="step-circle step-completed">1</div>
                 <div className="step-label">
@@ -275,24 +308,25 @@ function MaterialsContent() {
                 <div className="step-circle step-inactive">4</div>
                 <div className="step-label">作成完了</div>
               </div>
-            </div>
+            </div>          
+            
+            {/* 余白を削減 */}
+            <div className="h-2"></div>
 
-            <div className="text-center mb-8 mt-6">
-              <h1 className="text-2xl md:text-3xl font-bold">素材を選択</h1>
-            </div>
-
-            <div className="bg-white rounded-lg p-4 mb-8 relative">
-              <div className="text-base md:text-lg mb-3">選択中: {selectedCategory}</div>
+            <div className="bg-white rounded-lg p-4 mb-6 relative">
+              {/* 選択中：カテゴリ（フォントサイズ小さく） */}
+              <div className="text-sm mb-1">選択中: {selectedCategory}</div>
               
-              {/* 画像コンテナ - 高さを自動調整するように変更 */}
+              {/* 画像コンテナ - 画像が見切れないように調整 */}
               <div 
-                className="relative mb-6 image-container"
+                className="relative mb-3 image-container"
                 ref={imageContainerRef}
                 style={{ 
-                  maxHeight: isMobile ? '40vh' : '60vh', 
+                  maxHeight: isMobile ? '42vh' : '60vh',
                   display: 'flex',
                   justifyContent: 'center',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  width: '100%'
                 }}
               >
                 {categoryImage ? (
@@ -304,14 +338,15 @@ function MaterialsContent() {
                     sizes="100vw"
                     className="max-w-full h-auto object-contain rounded-lg"
                     style={{ 
-                      maxHeight: isMobile ? '35vh' : '55vh', 
-                      width: 'auto' 
+                      maxHeight: isMobile ? '40vh' : '48vh',
+                      width: 'auto',
+                      objectFit: 'contain'
                     }}
                     priority
                     onLoad={handleImageLoad}
                   />
                 ) : (
-                  <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-lg">
+                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg">
                     <span className="text-gray-500">カテゴリー選択した写真</span>
                   </div>
                 )}
@@ -324,8 +359,8 @@ function MaterialsContent() {
                 )}
               </div>
 
-              {/* 素材選択エリア - スマホで最適化 */}
-              <div className="relative mb-4">
+              {/* 素材選択エリア - 素材名を非表示に */}
+              <div className="relative mb-2">
                 <div
                   ref={materialsContainerRef}
                   className={`material-grid ${isMobile ? 'material-grid-mobile' : ''}`}
@@ -339,7 +374,7 @@ function MaterialsContent() {
                       onClick={() => handleMaterialClick(material.id)}
                     >
                       {'image' in material && material.image ? (
-                        <div className={`${isMobile ? 'h-20' : 'h-28'} overflow-hidden`}>
+                        <div className={`${isMobile ? 'h-16' : 'h-20'} overflow-hidden`}>
                           <Image
                             src={typeof material.image === 'string' ? material.image : '/images/placeholder.jpg'}
                             alt={material.name}
@@ -350,44 +385,40 @@ function MaterialsContent() {
                         </div>
                       ) : (
                         <div 
-                          className={`${isMobile ? 'h-20' : 'h-28'} flex items-center justify-center`}
+                          className={`${isMobile ? 'h-16' : 'h-20'} flex items-center justify-center`}
                           style={{ 
                             backgroundColor: getMaterialColorStyle(material.color)
                           }}
                         >
-                          <span className={`${getTextColor(material.color)} text-center px-2 ${isMobile ? 'text-sm' : 'text-base'}`}>
+                          <span className={`${getTextColor(material.color)} text-center px-2 ${isMobile ? 'text-xs' : 'text-sm'}`}>
                             {material.name}
                           </span>
                         </div>
                       )}
-                      <div className={`material-info ${isMobile ? 'text-xs' : 'text-sm'} py-2`}>
-                        {material.name}
-                        <br />({material.color})
-                      </div>
                     </div>
                   ))}
                 </div>
 
                 {/* ページネーション */}
-                <div className="flex justify-between items-center mt-4">
+                <div className="flex justify-between items-center mt-2">
                   <button
-                    className="w-10 h-10 bg-[#eb6832] rounded-full flex items-center justify-center"
+                    className="w-8 h-8 bg-[#f87e42] rounded-full flex items-center justify-center"
                     onClick={prevPage}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                   </button>
 
-                  <div className="text-base text-center">
+                  <div className="text-sm text-center">
                     {currentPage + 1} / {totalPages || 1}
                   </div>
 
                   <button
-                    className="w-10 h-10 bg-[#eb6832] rounded-full flex items-center justify-center"
+                    className="w-8 h-8 bg-[#f87e42] rounded-full flex items-center justify-center"
                     onClick={nextPage}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                   </button>
@@ -396,7 +427,7 @@ function MaterialsContent() {
             </div>
 
             <div className="flex justify-between mt-auto">
-              <Link href="/2-category" className="border border-gray-300 rounded-md px-5 py-2 text-gray-700 hover:bg-gray-100 transition-colors flex items-center">
+              <Link href="/2-category" className="flip-button-lr flex items-center px-5 py-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
                   <line x1="19" y1="12" x2="5" y2="12"></line>
                   <polyline points="12 19 5 12 12 5"></polyline>
@@ -408,7 +439,7 @@ function MaterialsContent() {
                 onClick={handleNextClick}
                 className={selectedMaterial === null ? 'pointer-events-none' : ''}
               >
-                <div className={`bg-[#eb6832] text-white px-5 py-2 rounded-md hover:bg-[#d55a25] transition-colors flex items-center ${selectedMaterial === null ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <div className={`flip-button-lr flex items-center px-5 py-2 ${selectedMaterial === null ? 'opacity-50 cursor-not-allowed' : ''}`}>
                   <span>次へ進む</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -429,71 +460,71 @@ function MaterialsContent() {
 
       {/* スタイル定義 */}
       <style jsx>{`
-        /* ステップナビゲーション */
-        .step-nav {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 10px;
-        }
-        
-        .step-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        }
-        
-        .step-circle {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          margin-bottom: 8px;
-        }
-        
-        .step-completed {
-          background-color: #eb6832;
-          color: white;
-        }
-        
-        .step-active {
-          background-color: #eb6832;
-          color: white;
-        }
-        
-        .step-inactive {
-          background-color: #e2e8f0;
-          color: #718096;
-        }
-        
-        .step-line {
-          flex-grow: 1;
-          height: 2px;
-          margin: 0 5px;
-        }
-        
-        .line-active {
-          background-color: #eb6832;
-        }
-        
-        .line-inactive {
-          background-color: #e2e8f0;
-        }
+      /* ステップナビゲーション */
+      .step-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+      }
+
+      .step-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+
+      .step-completed {
+        background-color: #fcb58a; /* 薄いオレンジ色（完了した工程用） */
+        color: white;
+      }
+
+      .step-active {
+        background-color: #f87e42; /* 濃いオレンジ色（現在の位置用） */
+        color: white;
+      }
+
+      .step-inactive {
+        background-color: #e2e8f0;
+        color: #718096;
+      }
+
+      .step-line {
+        flex-grow: 1;
+        height: 2px;
+        margin: 0 5px;
+      }
+
+      .line-active {
+        background-color: #fcb58a; /* 薄いオレンジ色（完了した区間用） */
+      }
+
+      .line-inactive {
+        background-color: #e2e8f0;
+      }
 
         /* 素材グリッド */
         .material-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 12px;
+          gap: 8px;
         }
         
         /* スマホ向け素材グリッド - 高さを小さく */
         .material-grid-mobile {
-          gap: 8px;
+          gap: 6px;
         }
         
         .material-item {
@@ -513,16 +544,6 @@ function MaterialsContent() {
         .material-item.selected {
           border: 2px solid #eb6832;
           box-shadow: 0 4px 12px rgba(235, 104, 50, 0.2);
-        }
-        
-        .material-info {
-          padding: 8px;
-          text-align: center;
-          flex-grow: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background-color: #f8f9fa;
         }
         
         /* エラーメッセージ */
@@ -550,19 +571,47 @@ function MaterialsContent() {
           }
           
           .material-info {
-            padding: 4px;
+            padding: 2px;
             line-height: 1.2;
           }
         }
       `}</style>
-    </div>
+            {/* フッターをインラインで追加 */}
+            <footer className="bg-black text-white py-4 mt-8 w-full">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center gap-6 mb-2 text-sm">
+            <a href="https://forest.toppan.com/refotoru/terms/" className="hover:underline">利用規約</a>
+            <a href="https://forest.toppan.com/refotoru/privacypolicy/" className="hover:underline">プライバシーポリシー</a>
+            <a href="https://x.gd/7Tv2I" className="hover:underline">お問い合わせ</a>
+            <a href="https://forest.toppan.com/refotoru/company/" className="hover:underline">企業情報</a>
+          </div>
+          <div className="flex justify-center items-center">
+            {!logoError ? (
+              <Image 
+                src="/images/logo-white.png" 
+                alt="リフォトル" 
+                width={30} 
+                height={30} 
+                className="mr-2"
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center mr-2">
+                <span className="text-white text-xs">ロゴ</span>
+              </div>
+            )}
+            <span className="text-sm">© 2024 TOPPAN Inc.</span>
+          </div>
+        </div>
+      </footer>
+      </div>
   );
 }
 
 // MaterialsPage
 export default function MaterialsPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#fdf6f2] flex items-center justify-center">読み込み中...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#fff9f0] flex items-center justify-center">読み込み中...</div>}>
       <MaterialsContent />
     </Suspense>
   );

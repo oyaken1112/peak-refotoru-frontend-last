@@ -12,17 +12,16 @@ export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // ファイルの先頭部分で logoError 状態を追加
+const [logoError, setLogoError] = useState(false);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setSelectedFile(file);
-      
-      // プレビュー用のURLを作成
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
-      
-      // コンテキストに画像をセット
       setUploadedImage(objectUrl);
     }
   };
@@ -30,16 +29,11 @@ export default function UploadPage() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       setSelectedFile(file);
-      
-      // プレビュー用のURLを作成
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
-      
-      // コンテキストに画像をセット
       setUploadedImage(objectUrl);
     }
   };
@@ -50,21 +44,17 @@ export default function UploadPage() {
   };
 
   const handleButtonClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    if (fileInputRef.current) fileInputRef.current.click();
   };
 
   const handleNext = () => {
-    if (previewUrl) {
-      router.push('/2-category');
-    }
+    if (previewUrl) router.push('/2-category');
   };
 
   return (
-    <div className="min-h-screen bg-[#fdf6f2]">
+    <div className="min-h-screen bg-[#fff9f0]">
       {/* ヘッダー */}
-      <header className="p-4 flex justify-between items-center bg-white shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white shadow-sm">
         <Link href="/" className="flex items-center">
           <Image 
             src="/images/logo.png" 
@@ -78,18 +68,49 @@ export default function UploadPage() {
           />
           <span className="text-xl font-bold">リフォトル</span>
         </Link>
-        <button className="p-2 rounded-full hover:bg-gray-100">
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="p-2 rounded-full hover:bg-gray-100 focus:outline-none"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
+        {menuOpen && (
+          <nav className="absolute top-full left-0 w-full bg-white border-t border-orange-200 shadow-md z-50">
+            <ul className="flex flex-col p-6 space-y-4">
+              <li>
+                <Link href="/1-upload" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                理想のお部屋イメージ画像を作る
+                </Link>
+                </li>
+                <li>
+                  <a href="https://x.gd/wlwOK" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                  優良リフォーム会社のご紹介はこちら
+                  </a>
+                  </li>
+                  <li>
+                    <a href="https://x.gd/pFA2q" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                    イメージ画像を探す
+                    </a>
+                    </li>
+                    <li>
+                      <a href="https://forest.toppan.com/refotoru/about/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                      リフォトルとは
+                      </a>
+                      </li>
+                      </ul>
+          </nav>
+        )}
       </header>
+      <main className="container mx-auto px-4 py-2 pt-20"></main>
+
 
       <div className="container mx-auto px-4 pt-8">
         {/* ステップインジケーター */}
-        <div className="step-nav mb-10">
+        <div className="step-nav mb-3">
           <div className="step-item">
             <div className="step-circle step-active">1</div>
             <div className="step-label">部屋写真<br/>アップ</div>
@@ -110,9 +131,10 @@ export default function UploadPage() {
             <div className="step-label">作成完了</div>
           </div>
         </div>
-
-        <h1 className="text-2xl font-bold text-center mb-8">部屋写真アップロード</h1>
-
+        
+        {/* 追加の余白 */}
+        <div className="h-8"></div>
+        
         {/* ドラッグ&ドロップエリア */}
         <div 
           className="max-w-xl mx-auto border-2 border-dashed border-orange-300 rounded-lg p-12 flex flex-col items-center justify-center bg-white cursor-pointer"
@@ -167,43 +189,19 @@ export default function UploadPage() {
         </div>
 
         {!previewUrl && (
-          <div className="max-w-xl mx-auto mt-6">
+          <div className="max-w-xl mx-auto mt-6 mb-6">
             <button 
               onClick={handleButtonClick}
-              className="w-full py-3 bg-[#eb6832] text-white rounded-md hover:bg-[#d55a25] transition-colors font-medium"
+              className="w-full py-3 border-2 border-[#eb6832] text-[#eb6832] bg-[#fff9f0] rounded-md hover:-translate-y-1 transition-transform font-medium"
             >
               写真を選択
             </button>
           </div>
         )}
 
-{/* プライバシーポリシー */}
-<div className="max-w-xl mx-auto mt-8 bg-blue-50 p-4 rounded-lg">
-  <div className="flex justify-center items-center mb-2">
-    {/* アイコン */}
-    <div className="text-blue-500 mr-2">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-      </svg>
-    </div>
-    {/* 見出しテキスト */}
-    <h3 className="font-medium text-center text-base ">プライバシー保護について</h3>
-  </div>
-
-  {/* 本文テキスト */}
-  <p className="text-sm text-gray-600 text-center whitespace-pre-line">
-    アップロードされた写真は<br />
-    安全なクラウドストレージに保存され、{'\n'}
-    リフォームイメージの作成にのみ使用されます。{'\n'}
-    個人情報保護のため、写真は暗号化され、{'\n'}
-    第三者に共有されることはありません。
-  </p>
-</div>
-
-
-        {/* ナビゲーションボタン */}
-        <div className="max-w-xl mx-auto mt-8 flex justify-between">
-          <Link href="/" className="flex items-center text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md px-5 py-2">
+        {/* ナビゲーションボタン（上部に移動） */}
+        <div className="max-w-xl mx-auto mb-4 flex justify-between">
+          <Link href="/" className="flip-button-lr flex items-center px-5 py-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
               <line x1="19" y1="12" x2="5" y2="12"></line>
               <polyline points="12 19 5 12 12 5"></polyline>
@@ -213,7 +211,7 @@ export default function UploadPage() {
           <button 
             onClick={handleNext}
             disabled={!previewUrl}
-            className={`flex items-center px-5 py-2 rounded-md ${previewUrl ? 'bg-[#eb6832] text-white hover:bg-[#d55a25]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'} transition-colors`}
+            className={`flip-button-lr flex items-center px-5 py-2 ${!previewUrl && 'opacity-50 cursor-not-allowed'}`}
           >
             <span>次へ進む</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
@@ -223,11 +221,58 @@ export default function UploadPage() {
           </button>
         </div>
 
-        {/* 注意書き */}
-        <div className="max-w-xl mx-auto mt-4 text-center text-sm text-gray-500">
-          写真をアップロードしてから次へ進んでください
+        {/* プライバシーポリシー（下部に移動） */}
+        <div className="max-w-xl mx-auto mt-4 bg-blue-50 p-4 rounded-lg">
+          <div className="flex justify-center items-center mb-2">
+            {/* アイコン */}
+            <div className="text-blue-500 mr-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            {/* 見出しテキスト */}
+            <h3 className="font-medium text-center text-base ">プライバシー保護について</h3>
+          </div>
+
+          {/* 本文テキスト */}
+          <p className="text-sm text-gray-600 text-center whitespace-pre-line">
+            アップロードされた写真は<br />
+            安全なクラウドストレージに保存され、{'\n'}
+            リフォームイメージの作成にのみ使用されます。{'\n'}
+            個人情報保護のため、写真は暗号化され、{'\n'}
+            第三者に共有されることはありません。
+          </p>
         </div>
       </div>
+
+      {/* フッターをインラインで追加 - 外側のdivの外に配置 */}
+      <footer className="bg-black text-white py-4 mt-8 w-full">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center gap-6 mb-2 text-sm">
+            <a href="https://forest.toppan.com/refotoru/terms/" className="hover:underline">利用規約</a>
+            <a href="https://forest.toppan.com/refotoru/privacypolicy/" className="hover:underline">プライバシーポリシー</a>
+            <a href="https://x.gd/7Tv2I" className="hover:underline">お問い合わせ</a>
+            <a href="https://forest.toppan.com/refotoru/company/" className="hover:underline">企業情報</a>
+          </div>
+          <div className="flex justify-center items-center">
+            {!logoError ? (
+              <Image 
+                src="/images/logo-white.png" 
+                alt="リフォトル" 
+                width={30} 
+                height={30} 
+                className="mr-2"
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center mr-2">
+                <span className="text-white text-xs">ロゴ</span>
+              </div>
+            )}
+            <span className="text-sm">© 2024 TOPPAN Inc.</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

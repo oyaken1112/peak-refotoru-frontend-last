@@ -39,6 +39,9 @@ export default function CategoryPage() {
   const { uploadedImage, setCategoryImage } = useImageContext();
   const router = useRouter();
   const demoPopupTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // フッター用の状態を追加
+  const [logoError, setLogoError] = useState(false);
 
   // ペンの色に対応するCSS変数
   const penColors = {
@@ -163,7 +166,7 @@ export default function CategoryPage() {
 
     // タッチイベントの場合はスクロールを防止
     if ('touches' in e) {
-      e.preventDefault(); // デフォルト動作を防止
+      // passive: falseを設定したイベントリスナーを使わず、ここでは単に処理を進める
     }
 
     setIsDrawing(true);
@@ -209,10 +212,8 @@ export default function CategoryPage() {
 
     if (!isDrawing || activeTool !== 'draw' || !currentPath) return;
 
-    // タッチイベントの場合はスクロールを防止
-    if ('touches' in e) {
-      e.preventDefault(); // デフォルト動作を防止
-    }
+    // タッチイベントの場合はここではpreventDefaultを呼び出さない
+    // e.preventDefaultは削除
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -423,7 +424,7 @@ export default function CategoryPage() {
       // ペンモードの場合はドラッグを無効に
       if (activeTool === 'draw') return;
       
-      e.preventDefault();
+      // preventDefaultは削除
       const touch = e.touches[0];
       setDragStart({ x: touch.clientX, y: touch.clientY });
     } else {
@@ -440,7 +441,7 @@ export default function CategoryPage() {
     if (!dragStart) return;
 
     if ('touches' in e) {
-      e.preventDefault();
+      // preventDefaultは削除
       const touch = e.touches[0];
       const dx = (touch.clientX - dragStart.x) / zoomLevel;
       const dy = (touch.clientY - dragStart.y) / zoomLevel;
@@ -498,11 +499,15 @@ export default function CategoryPage() {
     setViewPosition({ x: 0, y: 0 });
   };
 
-  // ホイールでのズーム（PC用）
+  // ホイールでのズーム（PC用）- キャンバスコンテナに限定する
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const direction = e.deltaY < 0 ? 'in' : 'out';
-    handleZoom(direction);
+    // キャンバスコンテナ内のホイールイベントのみ処理し、
+    // ページ全体のスクロールは阻止しない
+    if (canvasContainerRef.current && canvasContainerRef.current.contains(e.target as Node)) {
+      e.preventDefault();
+      const direction = e.deltaY < 0 ? 'in' : 'out';
+      handleZoom(direction);
+    }
   };
 
   // ツール切り替え（ペンと塗りつぶしのみ）
@@ -605,9 +610,18 @@ export default function CategoryPage() {
     }
   };
 
+  // タッチイベントのデフォルト動作を防止するためのハンドラ
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    // キャンバス上でのタッチ操作の場合のみスクロールを防止
+    if (canvasRef.current && canvasRef.current.contains(e.target as Node)) {
+      e.preventDefault();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#fdf6f2]">
-      <header className="p-4 flex justify-between items-center bg-white shadow-sm">
+    <div className="min-h-screen bg-[#fff9f0]">
+      {/* ヘッダー */}
+      <header className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white shadow-sm">
         <Link href="/" className="flex items-center">
           <Image 
             src="/images/logo.png" 
@@ -621,19 +635,49 @@ export default function CategoryPage() {
           />
           <span className="text-xl font-bold">リフォトル</span>
         </Link>
-        <button className="p-2 rounded-full hover:bg-gray-100">
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="p-2 rounded-full hover:bg-gray-100 focus:outline-none"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
+        {menuOpen && (
+          <nav className="absolute top-full left-0 w-full bg-white border-t border-orange-200 shadow-md z-50">
+            <ul className="flex flex-col p-6 space-y-4">
+              <li>
+                <Link href="/1-upload" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                理想のお部屋イメージ画像を作る
+                </Link>
+                </li>
+                <li>
+                  <a href="https://x.gd/wlwOK" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                  優良リフォーム会社のご紹介はこちら
+                  </a>
+                  </li>
+                  <li>
+                    <a href="https://x.gd/pFA2q" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                    イメージ画像を探す
+                    </a>
+                    </li>
+                    <li>
+                      <a href="https://forest.toppan.com/refotoru/about/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                      リフォトルとは
+                      </a>
+                      </li>
+                      </ul>
+          </nav>
+        )}
       </header>
+      <main className="container mx-auto px-4 py-2 pt-20"></main>
   
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-2xl mx-auto">
-          {/* ステップナビ */}
-          <div className="step-nav mb-6">
+          {/* ステップインジケーター */}
+          <div className="step-nav mb-3">
             <div className="step-item">
               <div className="step-circle step-completed">1</div>
               <div className="step-label">部屋写真<br />アップ</div>
@@ -654,11 +698,10 @@ export default function CategoryPage() {
               <div className="step-label">作成完了</div>
             </div>
           </div>
-  
-          <h1 className="text-2xl md:text-3xl font-bold text-center mb-8 mt-6">
-            カテゴリー・範囲選択
-          </h1>
-  
+          
+          {/* 追加の余白 */}
+        <div className="h-8"></div>
+          
           {/* カテゴリ選択 */}
           <div className="mb-4">
             <div className="flex items-center mb-3">
@@ -684,26 +727,72 @@ export default function CategoryPage() {
               </div>
             </div>
           </div>
+          
+          {/* 上部に配置する最低限のペン操作コントロール */}
+          <div className="bg-white rounded-lg p-3 mb-3 shadow-sm">
+            <div className="flex items-center justify-between">
+              {/* ツールボタン（左側に配置） */}
+              <div className="flex gap-2">
+                <button
+                  className={`tool-button ${activeTool === 'draw' ? 'tool-button-active' : ''}`}
+                  onClick={() => switchTool('draw')}
+                  title="ペン"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                </button>
+                <button
+                  className={`tool-button ${activeTool === 'fill' ? 'tool-button-active' : ''} ${paths.length === 0 ? 'tool-button-inactive' : ''}`}
+                  onClick={() => (paths.length > 0 ? switchTool('fill') : null)}
+                  title="塗りつぶし"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2s-8 9.4-8 14a8 8 0 0 0 16 0c0-4.6-8-14-8-14z"></path>
+                  </svg>
+                </button>
+              </div>
+              
+                  {/* ペン太さ調整スライダー（中央に配置）- PCでの幅を制限 */}
+                  <div className="flex-1 mx-4 max-w-[60%]">
+                    <Slider
+                    value={lineWidth}
+                    onValueChange={setLineWidth}
+                    max={10}
+                    min={1}
+                    step={1}
+                    className="pen-slider w-full"
+                    />
+                    </div>
+              
+              {/* ペン色選択（右側に配置） */}
+              <div className="flex items-center gap-1">
+                <div
+                  className={`pen-color-button pen-color-warm ${penColor === 'warm' ? 'active' : ''}`}
+                  onClick={() => setPenColor('warm')}
+                ></div>
+                <div
+                  className={`pen-color-button pen-color-cool ${penColor === 'cool' ? 'active' : ''}`}
+                  onClick={() => setPenColor('cool')}
+                ></div>
+                <div
+                  className={`pen-color-button pen-color-black ${penColor === 'black' ? 'active' : ''}`}
+                  onClick={() => setPenColor('black')}
+                ></div>
+              </div>
+            </div>
+          </div>
   
           {/* 描画キャンバス */}
-          <div className="bg-white rounded-lg p-6 mb-8 relative shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-base md:text-lg font-medium">選択中: {selectedCategory}</div>
-              <button className="bg-[#eb6832] text-white rounded-full p-1" onClick={handleHelpClick}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                </svg>
-              </button>
-            </div>
-  
+          <div className="bg-white rounded-lg p-6 mb-6 relative shadow-sm">
             <div
               className="relative mb-4 overflow-hidden image-container"
               ref={canvasContainerRef}
               onWheel={handleWheel}
+              onTouchStart={handleTouchStart}
               style={{
-                height: isMobile ? '50vh' : 'calc(100vh - 250px)', // モバイルの場合は画面の50%の高さに固定
+                height: isMobile ? '50vh' : 'calc(100vh - 250px)', // 元のサイズを維持
                 width: '100%',
                 position: 'relative',
                 display: 'flex',
@@ -731,7 +820,7 @@ export default function CategoryPage() {
                         width: 'auto', 
                         maxWidth: '100%',
                         height: 'auto',
-                        maxHeight: isMobile ? '45vh' : 'calc(100vh - 280px)' // モバイルでは少し小さく
+                        maxHeight: isMobile ? '45vh' : 'calc(100vh - 280px)' // 元のサイズを維持
                       }}
                       className="rounded-lg"
                       onLoad={initCanvas}
@@ -790,139 +879,82 @@ export default function CategoryPage() {
               )}
             </div>
 
-            {/* ズームコントロール - 全ユーザー向け */}
-            <div className="flex justify-center mb-4">
-              <button 
-                className="p-2 bg-gray-200 rounded-md mr-2"
-                onClick={resetZoom}
-                title="画像全体表示"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                </svg>
-              </button>
-              <button 
-                className="p-2 bg-gray-200 rounded-md mr-2"
-                onClick={() => handleZoom('in')}
-                title="拡大"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  <line x1="11" y1="8" x2="11" y2="14"></line>
-                  <line x1="8" y1="11" x2="14" y2="11"></line>
-                </svg>
-              </button>
-              <button 
-                className="p-2 bg-gray-200 rounded-md"
-                onClick={() => handleZoom('out')}
-                title="縮小"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  <line x1="8" y1="11" x2="14" y2="11"></line>
-                </svg>
-              </button>
-            </div>
-
-            {/* ペン太さ調整 */}
-            <div className="flex flex-col md:flex-row items-center justify-between mb-4">
-              <div className="pen-size-control w-full max-w-xs mb-2 md:mb-0">
-                <div className="pen-icon mr-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                  </svg>
-                </div>
-                <Slider
-                  value={lineWidth}
-                  onValueChange={setLineWidth}
-                  max={10}
-                  min={1}
-                  step={1}
-                  className="pen-slider mx-2 flex-grow"
-                />
-                <div className="pen-icon ml-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                  </svg>
-                </div>
-              </div>
-              <div className="text-center text-sm">太さ: {lineWidth[0]}</div>
-            </div>
-
-            {/* ペン色切替 */}
-            <div className="flex items-center justify-start gap-2 mb-4">
-              <div className="text-sm mr-1">ペン色:</div>
-              <div
-                className={`pen-color-button pen-color-warm ${penColor === 'warm' ? 'active' : ''}`}
-                onClick={() => setPenColor('warm')}
-              ></div>
-              <div
-                className={`pen-color-button pen-color-cool ${penColor === 'cool' ? 'active' : ''}`}
-                onClick={() => setPenColor('cool')}
-              ></div>
-              <div
-                className={`pen-color-button pen-color-black ${penColor === 'black' ? 'active' : ''}`}
-                onClick={() => setPenColor('black')}
-              ></div>
-            </div>
-
-            {/* ツールボタン - ズームボタン削除 */}
+            {/* 下部に残す操作コントロール */}
             <div className="flex justify-between items-center mb-4">
+              {/* ヘルプボタン */}
+              <button className="bg-[#f87e42] text-white rounded-full p-1" onClick={handleHelpClick}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </button>
+              
+              {/* ズームコントロール */}
+              <div className="flex">
+                <button 
+                  className="p-2 bg-gray-200 rounded-md mr-2"
+                  onClick={resetZoom}
+                  title="画像全体表示"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  </svg>
+                </button>
+                <button 
+                  className="p-2 bg-gray-200 rounded-md mr-2"
+                  onClick={() => handleZoom('in')}
+                  title="拡大"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                  </svg>
+                </button>
+                <button 
+                  className="p-2 bg-gray-200 rounded-md"
+                  onClick={() => handleZoom('out')}
+                  title="縮小"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                  </svg>
+                </button>
+              </div>
+              
+              {/* 元に戻す/やり直しボタン */}
               <div className="flex gap-2">
                 <button
-                  className={`tool-button ${activeTool === 'draw' ? 'tool-button-active' : ''}`}
-                  onClick={() => switchTool('draw')}
-                  title="ペン"
+                  className={`w-10 h-10 rounded-md flex items-center justify-center ${undoStack.length > 0 ? 'bg-gray-400' : 'bg-gray-300'}`}
+                  onClick={undo}
+                  disabled={undoStack.length === 0}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
                   </svg>
                 </button>
                 <button
-                  className={`tool-button ${activeTool === 'fill' ? 'tool-button-active' : ''} ${paths.length === 0 ? 'tool-button-inactive' : ''}`}
-                  onClick={() => (paths.length > 0 ? switchTool('fill') : null)}
-                  title="塗りつぶし"
+                  className={`w-10 h-10 rounded-md flex items-center justify-center ${redoStack.length > 0 ? 'bg-gray-400' : 'bg-gray-300'}`}
+                  onClick={redo}
+                  disabled={redoStack.length === 0}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2s-8 9.4-8 14a8 8 0 0 0 16 0c0-4.6-8-14-8-14z"></path>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
                   </svg>
                 </button>
               </div>
-            </div>
-
-            {/* 元に戻す/やり直しボタン */}
-            <div className="flex justify-end gap-3">
-              <button
-                className={`w-10 h-10 rounded-md flex items-center justify-center ${undoStack.length > 0 ? 'bg-gray-400' : 'bg-gray-300'}`}
-                onClick={undo}
-                disabled={undoStack.length === 0}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="19" y1="12" x2="5" y2="12"></line>
-                  <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-              </button>
-              <button
-                className={`w-10 h-10 rounded-md flex items-center justify-center ${redoStack.length > 0 ? 'bg-gray-400' : 'bg-gray-300'}`}
-                onClick={redo}
-                disabled={redoStack.length === 0}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </button>
             </div>
           </div>
 
           {/* ナビゲーションボタン */}
           <div className="flex justify-between mt-auto">
-            <Link href="/1-upload" className="border border-gray-300 rounded-md px-5 py-2 text-gray-700 hover:bg-gray-100 transition-colors flex items-center">
+            <Link href="/1-upload" className="flip-button-lr flex items-center px-5 py-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -934,7 +966,7 @@ export default function CategoryPage() {
               onClick={handleNextClick}
               className={!hasDrawn ? 'pointer-events-none' : ''}
             >
-              <div className={`bg-[#eb6832] text-white px-5 py-2 rounded-md hover:bg-[#d55a25] transition-colors flex items-center ${!hasDrawn ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              <div className={`flip-button-lr flex items-center px-5 py-2 ${!hasDrawn ? 'opacity-50 cursor-not-allowed' : ''}`}>
                 <span>次へ進む</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
                   <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -947,11 +979,13 @@ export default function CategoryPage() {
           {!hasDrawn && (
             <div className="error-message mt-2" id="error-message">
               範囲を選択してから次へ進んでください
-            </div>
+            </div> 
           )}
+          
         </div>
+        
       </div>
-
+      
       {/* モバイル用のスタイルを追加 */}
       <style jsx>{`
         /* モバイルでの表示調整 */
@@ -1059,60 +1093,88 @@ export default function CategoryPage() {
         }
         
         /* ステップナビゲーション */
-        .step-nav {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 10px;
-        }
-        
-        .step-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        }
-        
-        .step-circle {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          margin-bottom: 8px;
-        }
-        
-        .step-completed {
-          background-color: #eb6832;
-          color: white;
-        }
-        
-        .step-active {
-          background-color: #eb6832;
-          color: white;
-        }
-        
-        .step-inactive {
-          background-color: #e2e8f0;
-          color: #718096;
-        }
-        
-        .step-line {
-          flex-grow: 1;
-          height: 2px;
-          margin: 0 5px;
-        }
-        
-        .line-active {
-          background-color: #eb6832;
-        }
-        
-        .line-inactive {
-          background-color: #e2e8f0;
-        }
-      `}</style>
+  .step-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+  }
+  
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .step-completed {
+    background-color: #fcb58a; /* 薄いオレンジ色（完了した工程用） */
+    color: white;
+  }
+  
+  .step-active {
+    background-color: #f87e42; /* 濃いオレンジ色（現在の位置用） */
+    color: white;
+  }
+  
+  .step-inactive {
+    background-color: #e2e8f0;
+    color: #718096;
+  }
+  
+  .step-line {
+    flex-grow: 1;
+    height: 2px;
+    margin: 0 5px;
+  }
+  
+  .line-active {
+    background-color: #fcb58a; /* 薄いオレンジ色（完了した区間用） */
+  }
+  
+  .line-inactive {
+    background-color: #e2e8f0;
+  }
+`}</style>
+      {/* フッターをインラインで追加 */}
+<footer className="bg-black text-white py-4 mt-8">
+  <div className="container mx-auto px-4">
+    <div className="flex flex-wrap justify-center gap-6 mb-2 text-sm">
+      <a href="https://forest.toppan.com/refotoru/terms/" className="hover:underline">利用規約</a>
+      <a href="https://forest.toppan.com/refotoru/privacypolicy/" className="hover:underline">プライバシーポリシー</a>
+      <a href="https://x.gd/7Tv2I" className="hover:underline">お問い合わせ</a>
+      <a href="https://forest.toppan.com/refotoru/company/" className="hover:underline">企業情報</a>
+    </div>
+    <div className="flex justify-center items-center">
+      {!logoError ? (
+        <Image 
+          src="/images/logo-white.png" 
+          alt="リフォトル" 
+          width={30} 
+          height={30} 
+          className="mr-2"
+          onError={() => setLogoError(true)}
+        />
+      ) : (
+        <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center mr-2">
+          <span className="text-white text-xs">ロゴ</span>
+        </div>
+      )}
+      <span className="text-sm">© 2024 TOPPAN Inc.</span>
+    </div>
+  </div>
+</footer>
     </div>
   );
 }

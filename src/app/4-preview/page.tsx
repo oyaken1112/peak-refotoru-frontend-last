@@ -6,12 +6,17 @@ import Image from 'next/image';
 import { useImageContext } from '@/lib/image-context';
 
 export default function PreviewPage() {
-  const [activeTab, setActiveTab] = useState('before');
+  // State declarations
+  const [activeTab, setActiveTab] = useState('after');
   const [isMobile, setIsMobile] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [showImagePopup, setShowImagePopup] = useState(false);
   const { uploadedImage, materialImage, categoryImage } = useImageContext();
   const shareOptionsRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // フッター用の状態を追加
+  const [logoError, setLogoError] = useState(false);
+
 
   useEffect(() => {
     // 画面遷移時に最上部にスクロールする
@@ -40,6 +45,7 @@ export default function PreviewPage() {
     };
   }, []);
 
+  // Event handlers
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
@@ -88,8 +94,9 @@ export default function PreviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fdf6f2]">
-      <header className="p-4 flex justify-between items-center bg-white shadow-sm">
+    <div className="min-h-screen bg-[#fff9f0]">
+      {/* ヘッダー */}
+      <header className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white shadow-sm">
         <Link href="/" className="flex items-center">
           <Image 
             src="/images/logo.png" 
@@ -103,28 +110,90 @@ export default function PreviewPage() {
           />
           <span className="text-xl font-bold">リフォトル</span>
         </Link>
-        <button className="p-2 rounded-full hover:bg-gray-100">
+
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="p-2 rounded-full hover:bg-gray-100 focus:outline-none"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
+
+        {menuOpen && (
+          <nav className="absolute top-full left-0 w-full bg-white border-t border-orange-200 shadow-md z-50">
+            <ul className="flex flex-col p-6 space-y-4">
+              <li>
+                <Link href="/1-upload" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                  理想のお部屋イメージ画像を作る
+                </Link>
+              </li>
+              <li>
+                <a href="https://x.gd/wlwOK" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                  優良リフォーム会社のご紹介はこちら
+                </a>
+              </li>
+              <li>
+                <a href="https://x.gd/pFA2q" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                  イメージ画像を探す
+                </a>
+              </li>
+              <li>
+                <a href="https://forest.toppan.com/refotoru/about/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f87e42] hover:border-[#f87e42] border-b-2 border-transparent font-medium">
+                  リフォトルとは
+                </a>
+              </li>
+            </ul>
+          </nav>
+        )}
       </header>
+
+      <main className="container mx-auto px-4 py-2 pt-20">{/* ← pt-24 → pt-20、py-6 → py-2 */}</main>
+
+      {/* ステップナビゲーション */}
+      <div className="step-nav mb-3">
+        <div className="step-item">
+          <div className="step-circle step-completed">1</div>
+          <div className="step-label">
+            部屋写真
+            <br />
+            アップ
+          </div>
+        </div>
+        <div className="step-line line-active"></div>
+        <div className="step-item">
+          <div className="step-circle step-completed">2</div>
+          <div className="step-label">
+            カテゴリ
+            <br />
+            範囲選択
+          </div>
+        </div>
+        <div className="step-line line-active"></div>
+        <div className="step-item">
+          <div className="step-circle step-completed">3</div>
+          <div className="step-label">素材選択</div>
+        </div>
+        <div className="step-line line-active"></div>
+        <div className="step-item">
+          <div className="step-circle step-active">4</div>
+          <div className="step-label">作成完了</div>
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-4">
-            <h1 className="text-2xl md:text-3xl font-bold">作成完了！</h1>
-            <p className="text-sm md:text-base text-gray-600 mt-2">リフォーム後のイメージが完成しました</p>
           </div>
 
-          {/* Before/Afterタブ表示（白字に変更） */}
+          {/* Before/Afterタブ表示 */}
           <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
             <div className="flex">
               <div className="w-1/2">
                 <button
-                  className={`w-full py-3 text-white text-center font-bold transition-colors ${activeTab === 'before' ? 'bg-[#eb6832]' : 'bg-gray-400'}`}
+                  className={`w-full py-3 text-white text-center font-bold transition-colors ${activeTab === 'before' ? 'bg-[#f87e42]' : 'bg-gray-400'}`}
                   onClick={() => handleTabChange('before')}
                 >
                   Before
@@ -132,7 +201,7 @@ export default function PreviewPage() {
               </div>
               <div className="w-1/2">
                 <button
-                  className={`w-full py-3 text-white text-center font-bold transition-colors ${activeTab === 'after' ? 'bg-[#eb6832]' : 'bg-gray-400'}`}
+                  className={`w-full py-3 text-white text-center font-bold transition-colors ${activeTab === 'after' ? 'bg-[#f87e42]' : 'bg-gray-400'}`}
                   onClick={() => handleTabChange('after')}
                 >
                   After
@@ -192,7 +261,7 @@ export default function PreviewPage() {
           {/* 操作ボタン */}
           <div className="flex gap-4 mb-6">
             <button
-              className="w-1/2 bg-[#eb6832] text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+              className="action-button w-1/2 bg-[#fff9f0] text-[#f87e42] border border-[#f87e42] py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm"
               onClick={handleSave}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -202,9 +271,10 @@ export default function PreviewPage() {
               </svg>
               <span>保存する</span>
             </button>
+
             <div className="relative w-1/2" ref={shareOptionsRef}>
               <button
-                className="w-full bg-[#eb6832] text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+                className="action-button w-full bg-[#fff9f0] text-[#f87e42] border border-[#f87e42] py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm"
                 onClick={handleShare}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -217,24 +287,35 @@ export default function PreviewPage() {
                 <span>共有する</span>
               </button>
               
-              {/* シェアオプション - 実際のSNSアイコンを表示 */}
+              {/* シェアオプション - SNSアイコンを表示 */}
               {showShareOptions && (
-                <div className="absolute left-0 right-0 top-full mt-2 bg-white shadow-lg rounded-lg p-4 z-10 flex justify-around">
-                  <div className="text-center">
-                    <Image src="/images/instagram.png" alt="Instagram" width={32} height={32} />
-                    <div className="text-xs mt-1">Instagram</div>
-                  </div>
-                  <div className="text-center">
-                    <Image src="/images/x.png" alt="X" width={32} height={32} />
-                    <div className="text-xs mt-1">X</div>
-                  </div>
-                  <div className="text-center">
-                    <Image src="/images/facebook.png" alt="Facebook" width={32} height={32} />
-                    <div className="text-xs mt-1">Facebook</div>
-                  </div>
-                  <div className="text-center">
-                    <Image src="/images/pinterest.png" alt="Pinterest" width={32} height={32} />
-                    <div className="text-xs mt-1">Pinterest</div>
+                <div className="absolute inset-x-4 top-full mt-2 bg-[#fff9f0] shadow-lg rounded-lg p-4 z-10 w-full max-w-xs mx-auto">
+                  <p className="text-sm text-center mb-4 text-[#f87e42] font-bold">シェア先を選択</p>
+                  <div className="social-icon-grid">
+                    <a href="https://www.instagram.com/" className="social-icon-link">
+                      <div className="social-icon-container">
+                        <Image src="/images/instagram-con.png" alt="Instagram" width={36} height={36} className="social-icon" />
+                        <p className="social-icon-label">Instagram</p>
+                      </div>
+                    </a>
+                    <a href="https://x.com/" className="social-icon-link">
+                      <div className="social-icon-container">
+                        <Image src="/images/x-icon.png" alt="X" width={36} height={36} className="social-icon" />
+                        <p className="social-icon-label">X</p>
+                      </div>
+                    </a>
+                    <a href="https://www.facebook.com/" className="social-icon-link">
+                      <div className="social-icon-container">
+                        <Image src="/images/facebook-icon.png" alt="Facebook" width={36} height={36} className="social-icon" />
+                        <p className="social-icon-label">Facebook</p>
+                      </div>
+                    </a>
+                    <a href="https://jp.pinterest.com/" className="social-icon-link">
+                      <div className="social-icon-container">
+                        <Image src="/images/pinterest-icon.png" alt="Pinterest" width={36} height={36} className="social-icon" />
+                        <p className="social-icon-label">Pinterest</p>
+                      </div>
+                    </a>
                   </div>
                 </div>
               )}
@@ -243,37 +324,39 @@ export default function PreviewPage() {
 
           {/* リフォーム会社紹介バナー - キャンペーンバナー修正 */}
           <div className="mb-6">
-            <Link href="/contact" className="block">
-              <div className="border border-[#eb6832] rounded-lg p-4 text-center relative overflow-hidden">
+            <a href="https://x.gd/wlwOK" className="block">
+              <div className="reform-banner border border-[#f87e42] rounded-lg p-4 text-center relative overflow-hidden">
                 <div className="campaign-ribbon">
-                  <span>キャンペーン中</span>
+                  <span className="text-xs text-[8px]">キャンペーン中</span>
                 </div>
-                <div className="pt-4 mt-2">
-                  <p className="text-base font-medium text-gray-800">優良リフォーム会社のご紹介はこちら</p>
+                <div className="flex items-center justify-center h-12">
+                  <p className="text-base font-medium reform-banner-text">優良リフォーム会社のご紹介はこちら</p>
                 </div>
               </div>
-            </Link>
-            <div className="text-xs text-gray-500 text-center mt-2">※費用や期間などお気軽にお問い合わせください</div>
+            </a>
+            <div className="text-xs text-gray-500 text-center mt-2">※国土交通大臣登録団体の事業者を最大4社までご紹介します</div>
           </div>
 
-          {/* 統一されたナビゲーションボタン - サイズ調整 */}
-          <div className="flex flex-col gap-4 mb-8">
-            <Link href="/3-materials" className="w-full">
-              <div className="border border-[#eb6832] text-[#eb6832] bg-white py-4 rounded-lg font-medium text-center flex items-center justify-center h-14">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+          {/* 統一されたナビゲーションボタン - 横並び3つ */}
+          <div className="flex gap-3 mb-8">
+            <Link href="/3-materials" className="w-1/3">
+              <div className="flip-button-lr h-12 flex items-center justify-center text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
                   <line x1="19" y1="12" x2="5" y2="12"></line>
                   <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
                 <span>戻る</span>
               </div>
             </Link>
-            <Link href="/1-upload" className="w-full">
-              <div className="border border-[#2563eb] text-[#2563eb] bg-white py-4 rounded-lg font-medium text-center h-14">
+
+            <Link href="/1-upload" className="w-1/3">
+              <div className="other-room-button border border-[#f87e42] text-[#f87e42] bg-white rounded-lg font-medium text-center text-sm h-12 flex items-center justify-center transition-colors">
                 他の部屋でも試す
               </div>
             </Link>
-            <Link href="/" className="w-full">
-              <div className="border border-[#eb6832] text-white bg-[#eb6832] py-4 rounded-lg font-medium text-center h-14">
+
+            <Link href="/" className="w-1/3">
+              <div className="flip-button-lr h-12 flex items-center justify-center text-sm sm:text-base px-2 text-center whitespace-nowrap">
                 トップページへ
               </div>
             </Link>
@@ -300,6 +383,7 @@ export default function PreviewPage() {
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             </button>
+
             {activeTab === 'before' ? (
               uploadedImage || categoryImage ? (
                 <Image
@@ -336,22 +420,248 @@ export default function PreviewPage() {
         </div>
       )}
 
+      {/* フッターをインラインで追加 */}
+      <footer className="bg-black text-white py-4 mt-8">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center gap-6 mb-2 text-sm">
+            <a href="https://forest.toppan.com/refotoru/terms/" className="hover:underline">利用規約</a>
+            <a href="https://forest.toppan.com/refotoru/privacypolicy/" className="hover:underline">プライバシーポリシー</a>
+            <a href="https://x.gd/7Tv2I" className="hover:underline">お問い合わせ</a>
+            <a href="https://forest.toppan.com/refotoru/company/" className="hover:underline">企業情報</a>
+          </div>
+
+          <div className="flex justify-center items-center">
+            {!logoError ? (
+              <Image 
+                src="/images/logo-white.png" 
+                alt="リフォトル" 
+                width={30} 
+                height={30} 
+                className="mr-2"
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center mr-2">
+                <span className="text-white text-xs">ロゴ</span>
+              </div>
+            )}
+            <span className="text-sm">© 2024 TOPPAN Inc.</span>
+          </div>
+        </div>
+      </footer>
+
       {/* スタイル定義 */}
       <style jsx>{`
+        /* リフォーム会社紹介バナー用スタイル */
+        .reform-banner {
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+          background-color: #fff9f0;
+          transition: all 0.3s ease;
+        }
+        
+        .reform-banner::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background-color: #f87e42;
+          transition: left 0.3s ease;
+          z-index: -1;
+        }
+        
+        .reform-banner:hover::before,
+        .reform-banner:active::before {
+          left: 0;
+        }
+        
+        .reform-banner-text {
+          color: #333;
+          transition: color 0.3s ease;
+        }
+        
+        .reform-banner:hover .reform-banner-text,
+        .reform-banner:active .reform-banner-text {
+          color: white;
+        }
+        
         /* キャンペーンリボン */
         .campaign-ribbon {
           position: absolute;
           top: 0;
           left: 0;
-          background-color: #eb6832;
+          background-color: #f87e42;
           color: white;
           font-weight: bold;
-          font-size: 12px;
           text-align: center;
-          width: 120px;
-          transform: rotate(-45deg) translateX(-40px) translateY(-10px);
-          padding: 5px;
+          width: 100px;
+          transform: rotate(-45deg) translateX(-30px) translateY(-8px);
+          padding: 3px;
           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          z-index: 2;
+        }
+        
+        /* 左から右へ色反転するボタン */
+        .flip-button-lr {
+          position: relative;
+          background-color: #f87e42;
+          color: white;
+          border-radius: 0.5rem;
+          font-weight: 500;
+          border: 2px solid #f87e42;
+          overflow: hidden;
+          z-index: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: color 0.3s ease;
+        }
+
+        .flip-button-lr::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background-color: white;
+          transition: left 0.3s ease;
+          z-index: -1;
+        }
+
+        .flip-button-lr:hover,
+        .flip-button-lr:active {
+          color: #f87e42;
+        }
+
+        .flip-button-lr:hover::before,
+        .flip-button-lr:active::before {
+          left: 0;
+        }
+        
+        /* 保存する・共有するボタン用スタイル */
+        .action-button {
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+        }
+        
+        .action-button::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(248, 126, 66, 0.15);
+          opacity: 0;
+          z-index: -1;
+          transition: opacity 0.3s ease;
+        }
+        
+        .action-button:hover::after,
+        .action-button:active::after {
+          opacity: 1;
+        }
+        
+        .action-button:active::after {
+          background-color: rgba(248, 126, 66, 0.3);
+        }
+        
+        /* 他の部屋でも試すボタン用スタイル */
+        .other-room-button {
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+          color: #f87e42;
+          border-color: #f87e42;
+        }
+        
+        .other-room-button::before {
+          content: '';
+          position: absolute;
+          top: -100%;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 100%;
+          background-color: #f87e42;
+          transition: top 0.3s ease;
+          z-index: -1;
+        }
+        
+        .other-room-button:hover,
+        .other-room-button:active {
+          color: white;
+        }
+        
+        .other-room-button:hover::before,
+        .other-room-button:active::before {
+          top: 0;
+        }
+        
+        /* SNSアイコン用スタイル */
+        .social-icon-link {
+          text-decoration: none;
+          color: inherit;
+          transition: transform 0.2s;
+        }
+        
+        .social-icon-link:hover,
+        .social-icon-link:active {
+          transform: translateY(-2px);
+        }
+
+        .social-icon-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 8px;
+        }
+        
+        .social-icon-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+        }
+        
+        .social-icon {
+          width: 36px;
+          height: 36px;
+          object-fit: contain;
+          margin-bottom: 4px;
+        }
+        
+        .social-icon-label {
+          font-size: 11px;
+          text-align: center;
+          margin: 0;
+          color: #666;
+        }
+        
+        @media (max-width: 480px) {
+          .social-icon-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+          }
+          
+          .social-icon {
+            width: 28px;
+            height: 28px;
+          }
+          
+          .social-icon-label {
+            font-size: 10px;
+          }
+        }
+          @media (min-width: 481px) {
+          .social-icon-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+          }
         }
       `}</style>
     </div>
